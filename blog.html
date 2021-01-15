@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-  <title>Shimushu</title>
+  <title>messages | Shimushu</title>
   <link rel="icon" href="/img/avatar.png"/>
   <link
     rel="stylesheet"
@@ -40,7 +40,7 @@
   <header class="mdui-appbar mdui-appbar-fixed mdui-appbar-scroll-hide">
     <div class="mdui-toolbar mdui-color-deep-purple">
       <a href="javascript:;" class="mdui-btn mdui-btn-icon" mdui-drawer="{target: '#main-drawer'}"><i class="mdui-icon material-icons">menu</i></a>
-      <span class="mdui-typo-headline">nuntius</span>
+      <span class="mdui-typo-headline">nunti</span>
     </div>
   </header>
   <div class="mdui-drawer" id="main-drawer" style="display: flex; flex-direction: column;">
@@ -50,11 +50,11 @@
         <div class="mdui-list-item-content">Shimushu</div>
       </li>
       <li class="mdui-divider"></li>
-      <a class="mdui-list-item mdui-ripple mdui-list-item-active" href="#" target="_self">
+      <a class="mdui-list-item mdui-ripple" href="/" target="_self">
         <i class="mdui-list-item-icon mdui-icon material-icons">contact_mail</i>
         <div class="mdui-list-item-content">About me</div>
       </a>
-      <a class="mdui-list-item mdui-ripple" href="/blog.html" target="_self">
+      <a class="mdui-list-item mdui-ripple mdui-list-item-active" href="#" target="_self">
         <i class="mdui-list-item-icon mdui-icon material-icons">send</i>
         <div class="mdui-list-item-content">Blog</div>
       </a>
@@ -66,34 +66,48 @@
     </div>
   </div>
   <div class="mdui-container">
-    <div class="mdui-typo">
-      <h1>A brief introduction</h1>
-      <p>My real name is Sijie Wang, but I rarely use that, for both online and offline cases, for some reason. The name of Shimushu comes from an island of the Kuril Islands chain.</p>
-      <p>I'm major in aerospace engineering, being expected to graduate in 2023. I love coding, although I do not have any toy projects for now. Besides, I'm considering learning neuroscience and HPC as interests.</p>
-      <p>I enjoy reading philosophy books, in Chinese, English, and Latin, such as René Descartes' <i>Meditations on First Philosophy</i>.</p>
-      <!-- <h2>My projects</h2> -->
-      <h2>My education experiences</h2>
-      <ul>
-        <li>2012.9 - 2016.6, <a href="http://www.hecz.cn" target="_blank">Shanghai HuaEr Private Middle School</a>.</li>
-        <li>2016.9 - 2019.6, <a href="http://www.hsefzzz.cn" target="_blank">No.2 High School of East China Normal University, Zizhu</a>, Shanghai.</li>
-        <li>2019.9 - , <a href="https://www.sjtu.edu.cn" target="_blank">Shanghai Jiao Tong University</a>. <br/>
-          <sub><i>Bachelor of engineering degree in aerospace science and technology expected, 2023.</i></sub>
-        </li>
-      </ul>
-      <h2>Contact me</h2>
-      <p>Here's my email: <a href="mailto:wangsijie@outlook.com" target="_blank">wangsijie@outlook.com</a>.</p>
-      <h2>Some other links</h2>
-      <p>Here's <a href="blog.html" target="_self">my blog</a>, in Chinese, and is still under construction.</p>
-      <p>And some awesome websites owned by my friends are as follows.</p>
-    </div>
-    <a class="mdui-chip" href="https://space.bilibili.com/523059309/" target="_blank">
-      <img class="mdui-chip-icon" src="/avatars/kaleidoscopeTech.jpg"/>
-      <span class="mdui-chip-title">kaleidoscopeTech</span>
-    </a>
-    <a class="mdui-chip" href="https://rida2000.github.io" target="_blank">
-      <img class="mdui-chip-icon" src="/avatars/rida.jpg"/>
-      <span class="mdui-chip-title">Rida</span>
-    </a>
+    <ul class="mdui-list">
+      <div class="mdui-card mdui-m-b-1">
+        <div class="mdui-card-media">
+          <img src="/img/posts_header/86800103_p0.png" style="max-height: 360px; object-fit: contain;"/>
+        </div>
+        <div class="mdui-card-primary">
+          <div class="mdui-card-primary-title">响应时在干什么? 有没有空? 可以来卷<del>积</del>吗?</div>
+          <div class="mdui-card-primary-subtitle">又名: 为什么LTI系统的响应可以看作输入和单位脉冲响应的卷积?</div>
+        </div>
+        <div class="mdui-card-content">
+          <p class="mdui-typo">
+            高三的时候第一次看Modern Control System, 当时很多基础都没有, 比如Calculus和Laplace Transform, 学得云里雾里.
+            现在再回过头来学这玩意, 有了更深的理解<del>李姐</del>, 本文就是其中之一<del>但我估计大概率是没有后续了</del>.
+          </p>
+          <p>记于2021年1月15日.</p>
+        </div>
+        <div class="mdui-card-actions">
+          <a class="mdui-btn mdui-ripple" href="/posts/convolution-in-LTI-system.html" target="_self">Read More</a>
+          <a class="mdui-btn mdui-btn-icon mdui-float-right" mdui-tooltip="{content: 'Download the image'}" href="https://www.pixiv.net/artworks/86800103" target="_blank"><i class="mdui-icon material-icons">file_download</i></a>
+        </div>
+      </div>
+      <div class="mdui-card mdui-m-b-1">
+        <div class="mdui-card-media">
+          <img src="/img/posts_header/85575645_p0.png" style="max-height: 360px; object-fit: contain;"/>
+        </div>
+        <div class="mdui-card-primary">
+          <div class="mdui-card-primary-title">虽然是陈词滥调了但是似乎还是Hello World比较合适</div>
+          <div class="mdui-card-primary-subtitle"><del>嘛, 大约我的确不会起名字吧.</del></div>
+        </div>
+        <div class="mdui-card-content">
+          <p class="mdui-typo">
+            由于对现有的静态网页生成器和主题不够满意, 所以自己直接写了HTML, 就有了这个🌶🐔网页.<br/>
+            公式终于能渲染了, 👴的青春也回来🌶: \(\mathrm{e}^{\mathrm{i} \theta} = \cos \theta + \mathrm{i} \sin \theta\) .
+          </p>
+          <p>记于2021年1月14日.</p>
+        </div>
+        <div class="mdui-card-actions">
+          <a class="mdui-btn mdui-ripple" href="/posts/true-hello-world.html" target="_self">Read More</a>
+          <a class="mdui-btn mdui-btn-icon mdui-float-right" mdui-tooltip="{content: 'Download the image'}" href="https://www.pixiv.net/artworks/85575645" target="_blank"><i class="mdui-icon material-icons">file_download</i></a>
+        </div>
+      </div>
+    </ul>
   </div>
   <div class="mdui-fab-wrapper" id="theme-switch">
     <button class="mdui-fab mdui-ripple mdui-color-theme-accent">

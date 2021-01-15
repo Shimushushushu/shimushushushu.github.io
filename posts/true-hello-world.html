@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-  <title>Shimushu</title>
-  <link rel="icon" href="/img/avatar.png"/>
+  <title>虽然是陈词滥调了但是似乎还是Hello World比较合适 | Shimushu</title>
+  <link rel="icon" href="img/avatar.png"/>
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/mdui@1.0.1/dist/css/mdui.min.css"
@@ -40,7 +40,7 @@
   <header class="mdui-appbar mdui-appbar-fixed mdui-appbar-scroll-hide">
     <div class="mdui-toolbar mdui-color-deep-purple">
       <a href="javascript:;" class="mdui-btn mdui-btn-icon" mdui-drawer="{target: '#main-drawer'}"><i class="mdui-icon material-icons">menu</i></a>
-      <span class="mdui-typo-headline">nuntius</span>
+      <span class="mdui-typo-headline">nuntius ipsum</span>
     </div>
   </header>
   <div class="mdui-drawer" id="main-drawer" style="display: flex; flex-direction: column;">
@@ -50,13 +50,17 @@
         <div class="mdui-list-item-content">Shimushu</div>
       </li>
       <li class="mdui-divider"></li>
-      <a class="mdui-list-item mdui-ripple mdui-list-item-active" href="#" target="_self">
+      <a class="mdui-list-item mdui-ripple" href="/" target="_self">
         <i class="mdui-list-item-icon mdui-icon material-icons">contact_mail</i>
         <div class="mdui-list-item-content">About me</div>
       </a>
-      <a class="mdui-list-item mdui-ripple" href="/blog.html" target="_self">
+      <a class="mdui-list-item mdui-ripple mdui-list-item-active" href="/blog.html" target="_self">
         <i class="mdui-list-item-icon mdui-icon material-icons">send</i>
         <div class="mdui-list-item-content">Blog</div>
+      </a>
+      <a class="mdui-list-item mdui-ripple" href="/memo.html" target="_self">
+        <i class="mdui-list-item-icon mdui-icon material-icons">pets</i>
+        <div class="mdui-list-item-content">Memo</div>
       </a>
     </ul>
     <div class="mdui-typo" style="padding: 20px 16px;">
@@ -65,35 +69,18 @@
       Powered by <a href="https://mdui.org" target="_blank">MDUI</a>
     </div>
   </div>
-  <div class="mdui-container">
-    <div class="mdui-typo">
-      <h1>A brief introduction</h1>
-      <p>My real name is Sijie Wang, but I rarely use that, for both online and offline cases, for some reason. The name of Shimushu comes from an island of the Kuril Islands chain.</p>
-      <p>I'm major in aerospace engineering, being expected to graduate in 2023. I love coding, although I do not have any toy projects for now. Besides, I'm considering learning neuroscience and HPC as interests.</p>
-      <p>I enjoy reading philosophy books, in Chinese, English, and Latin, such as René Descartes' <i>Meditations on First Philosophy</i>.</p>
-      <!-- <h2>My projects</h2> -->
-      <h2>My education experiences</h2>
-      <ul>
-        <li>2012.9 - 2016.6, <a href="http://www.hecz.cn" target="_blank">Shanghai HuaEr Private Middle School</a>.</li>
-        <li>2016.9 - 2019.6, <a href="http://www.hsefzzz.cn" target="_blank">No.2 High School of East China Normal University, Zizhu</a>, Shanghai.</li>
-        <li>2019.9 - , <a href="https://www.sjtu.edu.cn" target="_blank">Shanghai Jiao Tong University</a>. <br/>
-          <sub><i>Bachelor of engineering degree in aerospace science and technology expected, 2023.</i></sub>
-        </li>
-      </ul>
-      <h2>Contact me</h2>
-      <p>Here's my email: <a href="mailto:wangsijie@outlook.com" target="_blank">wangsijie@outlook.com</a>.</p>
-      <h2>Some other links</h2>
-      <p>Here's <a href="blog.html" target="_self">my blog</a>, in Chinese, and is still under construction.</p>
-      <p>And some awesome websites owned by my friends are as follows.</p>
-    </div>
-    <a class="mdui-chip" href="https://space.bilibili.com/523059309/" target="_blank">
-      <img class="mdui-chip-icon" src="/avatars/kaleidoscopeTech.jpg"/>
-      <span class="mdui-chip-title">kaleidoscopeTech</span>
-    </a>
-    <a class="mdui-chip" href="https://rida2000.github.io" target="_blank">
-      <img class="mdui-chip-icon" src="/avatars/rida.jpg"/>
-      <span class="mdui-chip-title">Rida</span>
-    </a>
+  <div class="mdui-container mdui-typo">
+    <h1>虽然是陈词滥调了但是似乎还是Hello World比较合适</h1>
+    <p>
+      之前一直都想建个博客, 但是不想租服务器<del>因为没钱</del>, 也不想建在CSDN抑或是cnblogs这种地方(倒也不是瞧不起这些网站, 毕竟这些网站上不乏julao), Github Papes也因为各种原因<del>连repo都没有还想建在gp上, sb等死吧</del>没有采用. 但是今天, 我总算是迈出了这一步.<br/>
+      不过, 就算是现在, 我还是<del>什么都不会呜呜呜</del>不太会折腾这些东西, 所以就选了个最普通的框架(<a href="https://mdui.org" target="_blank">MDUI</a>)乱写了一通, 大概也没有很严格地遵循<a href="https://material.io" target="_blank">Material Design</a>, 但是问题应该也不大. 反正从某种意义上来说, 内容比较重要不是吗.<br/>
+      再试试看公式可不可用, 毕竟逼我直接上HTML的一个原因是hexo的公式支持不太理想:
+      \[\mathscr{L}( f(t) ) = \int_{0^-}^{+ \infty} f(t) \mathrm{e}^{- s t} \mathop{} \! \mathrm{d} t = F(s) .\]
+      自己写这种网站的一个问题就是各种超链接做得8行, 暂且就凑合吧.<br/>
+      为了方便<del>迎合</del>各位<del>lsp</del>, 我把每张头图的链接都给了出来, 但是因为版权原因我觉得不能直接给下载链接<del>虽然文件都有了</del>, 所以就象征性地给了P站链接. 懂的都懂, 不懂的我也不多说了.<br/>
+      最后就是声明一下这些网页的内容除了显式声明的之外都会基于<a href="https://creativecommons.org/licenses/by-nc-sa/4.0" target="_blank">CC BY-NC-SA 4.0</a>发布<del>搞得还有人盗你个憨憨的文章似的</del>.<br/>
+      嘛, 大概就这些了.
+    </p>
   </div>
   <div class="mdui-fab-wrapper" id="theme-switch">
     <button class="mdui-fab mdui-ripple mdui-color-theme-accent">
