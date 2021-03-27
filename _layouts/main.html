@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+  <link rel="icon" href="{{ site.icon }}"/>
+  {% include mdui.html %}
+  {% if site.katex and page.katex %}{% include katex.html %}{% endif %}
+</head>
+<body class="mdui-appbar-with-toolbar mdui-drawer-body-left mdui-theme-layout-auto mdui-theme-accent-deep-purple">
+  <header class="mdui-appbar mdui-appbar-fixed mdui-appbar-scroll-hide">
+    <div class="mdui-toolbar mdui-color-deep-purple">
+      <a href="javascript:;" class="mdui-btn mdui-btn-icon" mdui-drawer="{target: '#main-drawer'}"><i class="mdui-icon material-icons">menu</i></a>
+      <span class="mdui-typo-headline">{{ page.headline }}</span>
+    </div>
+  </header>
+  <div class="mdui-drawer" id="main-drawer" style="display: flex; flex-direction: column;">
+    <ul class="mdui-list" style="flex: 1;">
+      <li class="mdui-list-item mdui-ripple">
+        <div class="mdui-list-item-avatar"><img src="{{ site.avatar }}"/></div>
+        <div class="mdui-list-item-content">{{ site.author }}</div>
+      </li>
+      <li class="mdui-divider"></li>
+      <a class="mdui-list-item mdui-ripple{% if page.highlight == 'index' %} mdui-list-item-active{% endif %}" href="{% if page.highlight == 'index' %}#{% else %}/{% endif %}" target="_self">
+        <i class="mdui-list-item-icon mdui-icon material-icons">contact_mail</i>
+        <div class="mdui-list-item-content">About me</div>
+      </a>
+      <a class="mdui-list-item mdui-ripple{% if page.highlight == 'blog' %} mdui-list-item-active{% endif %}" href="{% if page.highlight == 'blog' %}#{% else %}{{ site.blog }}{% endif %}" target="_self">
+        <i class="mdui-list-item-icon mdui-icon material-icons">send</i>
+        <div class="mdui-list-item-content">Blog</div>
+      </a>
+    </ul>
+    <div class="mdui-typo" style="padding: 20px 16px;">
+      © {{ site.time | date: "%Y" }} {{ site.author }}<br/>
+      Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0" target="_blank">CC BY-NC-SA 4.0</a><br/>
+      Powered by <a href="https://mdui.org" target="_blank">MDUI</a>{% if site.katex and page.katex %} & <a href="https://katex.org" target="_blank">\(\KaTeX\)</a>{% endif %}<br/>
+      Generated with <a href="https://jekyllrb.com" target="_blank">Jekyll</a>
+    </div>
+  </div>
+  <div class="mdui-container">
+    {{ content }}
+  </div>
+</body>
+</html>

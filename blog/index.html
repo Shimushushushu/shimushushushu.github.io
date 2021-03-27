@@ -1,0 +1,45 @@
+---
+layout: main
+katex: false
+title: "messages"
+headline: "nunti"
+highlight: "blog"
+paginate: true
+---
+
+<ul class="mdui-list">
+  {% for post in paginator.posts %}
+    <div class="mdui-card mdui-m-b-1">
+      <div class="mdui-card-media">
+        <img src="{{ post.path | replace: '_posts/', '' | replace: '.html', '' | prepend: '/assets/img/' | append: '/' | append: post.head }}" style="max-height: 360px; object-fit: contain;">
+      </div>
+      <div class="mdui-card-primary">
+        <div class="mdui-card-primary-title">{{ post.title }}</div>
+        <div class="mdui-card-primary-subtitle">{{ post.subtitle }}</div>
+      </div>
+      <div class="mdui-card-content">
+        {% if post.abstract %}
+          <p class="mdui-typo" style="text-align: justify;">
+            {{ post.abstract }}
+          </p>
+        {% endif %}
+        <p>记于{{ post.date | date: "%Y" }}年{{ post.date | date: "%m" }}月{{ post.date | date: "%d" }}日.</p>
+      </div>
+      <div class="mdui-card-actions">
+        <a class="mdui-btn mdui-ripple" href="{{ post.url }}" target="_self">Read More</a>
+        {% if post.headurl %}<a class="mdui-btn mdui-btn-icon mdui-float-right" mdui-tooltip="{content: 'Source of the image'}" href="{{ post.headurl }}" target="_blank"><i class="mdui-icon material-icons">open_in_new</i></a>{% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</ul>
+{% if paginator.total_pages > 1 %}
+  <div class="mdui-divider"></div>
+  <a href="{% if paginator.previous_page %}{{ paginator.previous_page_path }}{% else %}#{% endif %}" class="mdui-btn mdui-ripple mdui-float-left" {% if paginator.previous_page == nil %}disabled{% endif %}>
+    <i class="mdui-icon material-icons">arrow_back</i>
+    <span>Next</span>
+  </a>
+  <a href="{% if paginator.next_page %}{{ paginator.next_page_path }}{% else %}#{% endif %}" class="mdui-btn mdui-ripple mdui-float-right" {% if paginator.next_page == nil %}disabled{% endif %}>
+    <span>Previous</span>
+    <i class="mdui-icon material-icons">arrow_forward</i>
+  </a>
+{% endif %}

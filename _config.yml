@@ -1,0 +1,19 @@
+author: "Shimushu"
+avatar: "/assets/img/avatar.png"
+icon:   "/assets/img/avatar.png"
+
+katex: true
+
+title: "Shimushu"
+
+blog: "/blog/"
+
+paginate: 3
+paginate_path: "/blog/page/:num/"
+
+plugins: [jekyll-paginate]
+
+# For RSS feed
+name:        "Shimushu" 
+description: "..."
+url:         "https://shimushushushu.github.io"
