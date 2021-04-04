@@ -27,6 +27,10 @@
         <i class="mdui-list-item-icon mdui-icon material-icons">contact_mail</i>
         <div class="mdui-list-item-content">About me</div>
       </a>
+      <a class="mdui-list-item mdui-ripple{% if page.highlight == 'about' %} mdui-list-item-active{% endif %}" href="{% if page.highlight == 'about' %}#{% else %}/about.html{% endif %}" target="_self">
+        <i class="mdui-list-item-icon mdui-icon material-icons">info</i>
+        <div class="mdui-list-item-content">About the website</div>
+      </a>
       <a class="mdui-list-item mdui-ripple{% if page.highlight == 'blog' %} mdui-list-item-active{% endif %}" href="{% if page.highlight == 'blog' %}#{% else %}{{ site.blog }}{% endif %}" target="_self">
         <i class="mdui-list-item-icon mdui-icon material-icons">send</i>
         <div class="mdui-list-item-content">Blog</div>

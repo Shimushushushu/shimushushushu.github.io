@@ -10,9 +10,11 @@ paginate: true
 <ul class="mdui-list">
   {% for post in paginator.posts %}
     <div class="mdui-card mdui-m-b-1">
-      <div class="mdui-card-media">
-        <img src="{{ post.path | replace: '_posts/', '' | replace: '.html', '' | prepend: '/assets/img/' | append: '/' | append: post.head }}" style="max-height: 360px; object-fit: contain;">
-      </div>
+      {% if post.head %}
+        <div class="mdui-card-media">
+          <img src="{{ post.path | replace: '_posts/', '' | replace: '.html', '' | prepend: '/assets/img/' | append: '/' | append: post.head }}" style="max-height: 360px; object-fit: contain;">
+        </div>
+      {% endif %}
       <div class="mdui-card-primary">
         <div class="mdui-card-primary-title">{{ post.title }}</div>
         <div class="mdui-card-primary-subtitle">{{ post.subtitle }}</div>
@@ -22,6 +24,9 @@ paginate: true
           <p class="mdui-typo" style="text-align: justify;">
             {{ post.abstract }}
           </p>
+        {% endif %}
+        {% if post.postscript %}
+          <p>{{ post.postscript }}</p>
         {% endif %}
         <p>记于{{ post.date | date: "%Y" }}年{{ post.date | date: "%m" }}月{{ post.date | date: "%d" }}日.</p>
       </div>
