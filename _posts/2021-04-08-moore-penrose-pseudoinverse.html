@@ -20,18 +20,29 @@ abstract: "此文为2020-2021, Fall的计算方法(MA127)的大作业的一部�
   所以我们可能就会自然而然地思考: 能不能找到一个对任意矩阵的映射 \(T\) , 对于任意的 \(A x = b\) , 都可以把解(最小二乘解)写成 \(x = T(A) b\) 的形式? <!-- 如果这个映射 \(T\) 存在的话, 显然它需要把任意可逆矩阵 \(A\) 都映射成 \(A^{-1}\) . --> 答案是肯定的, 这个 \(T\) 就是 \(T(A) = A^{\dagger}\) <a href="#href-03">[3]</a>.
 </p>
 <p>
-  首先我们给出 \(A^{\dagger}\) 的定义: 对于任意一个矩阵 \(A \in \mathbb{F}^{m \times n}\) , 如果存在一个矩阵 \(X \in \mathbb{F}^{n \times m}\) 使得:
+  首先我们给出 \(A^{\dagger}\) 的定义: 对于任意矩阵 \(A \in \mathbb{F}^{m \times n}\) , 如果存在矩阵 \(X \in \mathbb{F}^{n \times m}\) 使得:
   \[\begin{cases}
   A X A & = A, \\
   X A X & = X, \\
   (A X)^* & = A X, \\
   (X A)^* & = X A,
   \end{cases}\]
-  那么我们就称这个 \(X\) 为 \(A\) 的Moore-Penrose广义逆, 记作 \(A^{\dagger}\) . 但是一般而言所谓的"逆"都是唯一的, 不然我们甚至不能写 \(A^{\dagger} = A^{\dagger}\) <a href="#href-05">[5]</a>. 所以我们需要证明这样的 \(X\) 对于固定的 \(A\) 是唯一的. 当然, 既然是"广义"的, 我们还可以说明一下对于任意的 \(A\) , \(X\) 确实是存在的.
+  那么我们就称这个 \(X\) 为 \(A\) 的Moore-Penrose广义逆, 记作 \(A^{\dagger}\) . 但是一般而言所谓的"逆"都是唯一的, 否则我们连 \(A^{\dagger} = A^{\dagger}\) 都不能写<a href="#href-05">[5]</a>, 所以我们需要证明这样的 \(X\) 对于每个 \(A\) 是唯一的. 当然, 既然是"广义"的, 我们还可以说明一下对于任意的 \(A\) , \(X\) 确实是存在的. 不过, 碍于篇幅, 我们会把唯一性的证明放在最后.
 </p>
+<p>
+  那么我们就来通过构造 \(A^{\dagger}\) 来说明它的存在性. 因为对于任意矩阵 \(A \in \mathbb{F}^{m \times n}\) 存在SVD分解 \(A = U \Sigma V^*\) , 所以我们由此构造 \(X = V \Sigma' U^* \in \mathbb{F}^{n \times m}\) , 其中 \(\Sigma'\) 就是将 \(\Sigma\) 转置并将其对角线上的非零元素变成其倒数. 容易验证, \(X\) 确实是 \(A\) 的M-P广义逆.
+</p>
+<p>
+  虽然我们略去了具体的验证过程, 但是有几个小细节值得提一下:
+  <ul>
+    <li>\(\Sigma' \Sigma \Sigma' = \Sigma'\) : 因为 \(\Sigma\) 和 \(\Sigma'\) 都只在对角线上有非零元素, 所以 \(\Sigma \Sigma'\) 等于将其非零元素换成 \(1\) 的 \(m\) 阶方阵, 所以该式成立, 并且反过来也成立.</li>
+    <li>\(\Sigma \Sigma' = \Sigma'^* \Sigma^*\) : 和上面的基本同理, 然后 \(1\) 的共轭还是它自己, 反过来当然也成立.</li>
+  </ul>
+</p>
+
 <div class="mdui-divider"></div>
 <p>
-  <span id="href-01">[1]: 这等价于对于线性映射 \(T \in \mathcal{L} (V, W)\) , 且 \(V\) 是有限维的线性空间, 那么 \(\mathrm{dim} ~ V = \mathrm{dim} ~ \mathrm{null} ~ T + \mathrm{dim} ~ \mathrm{range} ~ T\) , 可以参见Sheldon Axler的<a href="https://linear.axler.net/" target="_blank">Linear Algebra Done Right</a>.</span><br/>
+  <span id="href-01">[1]: 这等价于对于线性映射 \(T \in \mathcal{L} (V, W)\) , 若 \(V\) 是有限维的线性空间, 那么 \(\mathrm{dim} ~ V = \mathrm{dim} ~ \mathrm{null} ~ T + \mathrm{dim} ~ \mathrm{range} ~ T\) , 可以参见Sheldon Axler的<a href="https://linear.axler.net/" target="_blank">Linear Algebra Done Right</a>.</span><br/>
   <span id="href-02">[2]: 只有可逆的方阵才能满足 \(A\) 的秩等于 \(x\) 的维数, 这也说明了当 \(A\) 是不可逆方阵的时候, 它也属于"宽线性系统".</span><br/>
   <span id="href-03">[3]: \(A^{\dagger}\) 常被写作 \(A^{+}\) , 但是在Penrose的论文<a href="#href-04">[4]</a>中其实是前者. \(\dagger\) 在 \(\TeX\) 中写作<code>\dagger</code>, 意思是匕首, 但是据说和基督教中的十字架也有关系.</span><br/>
   <span id="href-04">[4]: Penrose, R. "A Generalized Inverse for Matrices." Proc. Cambridge Phil. Soc. 51, 406-413, 1955. <a href="https://www.cambridge.org/core/services/aop-cambridge-core/content/view/5F4516D6B9989BB6563A4B267CC7D615/S0305004100030401a.pdf/generalized_inverse_for_matrices.pdf">文章链接</a></span><br/>
