@@ -5,19 +5,18 @@ title: "新世纪矩阵代数-改"
 subtitle: "又名: Moore-Penrose广义逆, 我的超人"
 headline: "nuntius ipsum"
 abstract: "此文为2020-2021, Fall的计算方法(MA127)的大作业的一部分: \"宽线性系统求解\", 有删改. 或者也可以看作是上一篇SVD的后续."
-# published: false
 ---
 
 <p>
   首先, 我们先解释一下什么是"宽线性系统". 如果把线性系统写成矩阵的形式:
   \[A x = b,\]
-  且 \(A\) 的秩 \(r\) 小于 \(x\) 的维数 \(n\) (或者也可以不太严谨地当成是 \(A\) 的行数小于列数, 也就是所谓的"宽"), 那么这个线性系统就有 \(n - r \geq 1\) 维的解<a href="#href-01">[1]</a>, 这样的线性系统就是所谓的"宽线性系统". 所以换句话说, 宽线性系统就是有无穷多解的线性系统.
+  其中 \(A\) 的秩 \(r\) 小于 \(x\) 的维数 \(n\) (或者也可以不太严谨地当成是 \(A\) 的行数小于列数, 也就是所谓的"宽"), 并且这个系统有解的话, 那么这个线性系统就有 \(n - r \geq 1\) 维的解<a href="#href-01">[1]</a>, 这样的线性系统就是所谓的"宽线性系统". 所以换句话说, "宽线性系统"就是有无穷多解的线性系统.
 </p>
 <p>
-  如果我们把"宽"的 \(A\) 换成一个可逆方阵<a href="#href-02">[2]</a>的话, 解这样的方程就变得轻而易举: \(x = A^{-1} b\) . 但是如果这个矩阵接着被横向地"压扁", 从"宽"的变成"方"的, 再变成"高"的, 这时方程可能就没有解了, 我们大概率只能退而求其次, 求它的最小二乘解.
+  如果我们把"宽"的 \(A\) 换成一个可逆方阵<a href="#href-02">[2]</a>的话, 解这样的系统就变得轻而易举: \(x = A^{-1} b\) . 但是如果这个矩阵接着被横向地"压扁", 从"宽"的变成"方"的, 再变成"高"的<a href="#href-03">[3]</a>, 这时系统可能就没有解了, 我们大概率只能退而求其次, 求它的最小二乘解.
 </p>
 <p>
-  所以我们可能就会自然而然地思考: 能不能找到一个对任意矩阵的映射 \(T\) , 对于任意的 \(A x = b\) , 都可以把解(最小二乘解)写成 \(x = T(A) b\) 的形式? <!-- 如果这个映射 \(T\) 存在的话, 显然它需要把任意可逆矩阵 \(A\) 都映射成 \(A^{-1}\) . --> 答案是肯定的, 这个 \(T\) 就是 \(T(A) = A^{\dagger}\) <a href="#href-03">[3]</a>.
+  所以我们可能就会自然而然地思考: 能不能找到一个对任意矩阵的函数 \(f\) , 对于任意的 \(A x = b\) , 都可以把解(最小二乘解)写成 \(x = f(A) b\) 的形式? 答案是肯定的, 这个 \(f\) 就是 \(f(A) = A^{\dagger}\) <a href="#href-04">[4]</a>.
 </p>
 <p>
   首先我们给出 \(A^{\dagger}\) 的定义: 对于任意矩阵 \(A \in \mathbb{F}^{m \times n}\) , 如果存在矩阵 \(X \in \mathbb{F}^{n \times m}\) 使得:
@@ -27,7 +26,7 @@ abstract: "此文为2020-2021, Fall的计算方法(MA127)的大作业的一部�
   (A X)^* & = A X, \\
   (X A)^* & = X A,
   \end{cases}\]
-  那么我们就称这个 \(X\) 为 \(A\) 的Moore-Penrose广义逆, 记作 \(A^{\dagger}\) . 但是一般而言所谓的"逆"都是唯一的, 否则我们连 \(A^{\dagger} = A^{\dagger}\) 都不能写<a href="#href-05">[5]</a>, 所以我们需要证明这样的 \(X\) 对于每个 \(A\) 是唯一的. 当然, 既然是"广义"的, 我们还可以说明一下对于任意的 \(A\) , \(X\) 确实是存在的. 不过, 碍于篇幅, 我们会把唯一性的证明放在最后.
+  那么我们就称这个 \(X\) 为 \(A\) 的Moore-Penrose广义逆, 记作 \(A^{\dagger}\) . 但是一般而言所谓的"逆"都是唯一的, 否则我们连 \(A^{\dagger} = A^{\dagger}\) 都不能写<a href="#href-06">[6]</a>, 所以我们需要证明这样的 \(X\) 对于每个 \(A\) 是唯一的. 当然, 既然是"广义"的, 我们还可以说明一下对于任意的 \(A\) , \(X\) 确实是存在的.
 </p>
 <p>
   那么我们就来通过构造 \(A^{\dagger}\) 来说明它的存在性. 因为对于任意矩阵 \(A \in \mathbb{F}^{m \times n}\) 存在SVD分解 \(A = U \Sigma V^*\) , 所以我们由此构造 \(X = V \Sigma' U^* \in \mathbb{F}^{n \times m}\) , 其中 \(\Sigma'\) 就是将 \(\Sigma\) 转置并将其对角线上的非零元素变成其倒数. 容易验证, \(X\) 确实是 \(A\) 的M-P广义逆.
@@ -36,15 +35,86 @@ abstract: "此文为2020-2021, Fall的计算方法(MA127)的大作业的一部�
   虽然我们略去了具体的验证过程, 但是有几个小细节值得提一下:
   <ul>
     <li>\(\Sigma' \Sigma \Sigma' = \Sigma'\) : 因为 \(\Sigma\) 和 \(\Sigma'\) 都只在对角线上有非零元素, 所以 \(\Sigma \Sigma'\) 等于将其非零元素换成 \(1\) 的 \(m\) 阶方阵, 所以该式成立, 并且反过来也成立.</li>
-    <li>\(\Sigma \Sigma' = \Sigma'^* \Sigma^*\) : 和上面的基本同理, 然后 \(1\) 的共轭还是它自己, 反过来当然也成立.</li>
+    <li>\(\Sigma \Sigma' = \Sigma'^* \Sigma^*\) : 和上面的基本同理, 并且 \(1\) 的共轭还是它自己, 反过来当然也成立.</li>
+    <li>为了避免循环定义我们使用了 \(\Sigma'\) 这样的符号, 但是容易验证 \(\Sigma' = \Sigma^{\dagger}\) , 因为 \(\Sigma\) 的SVD分解就是它自己( \(U\) 和 \(V\) 都是 \(I\) .)</li>
   </ul>
+  并且我们可以验证对于可逆矩阵 \(A\) , \(A^{\dagger} = A^{-1}\) , 从而说明了这个广义逆的定义是合理的.
 </p>
-
+<p>
+  然后, 我们来证明它的唯一性. 假设 \(X\) 和 \(Y\) 都是 \(A\) 的M-P广义逆, 那么有:
+  \[\begin{cases}
+  X = X A X = X X^* A^* = X X^* A^* Y^* A^* = X A Y A Y, \\
+  Y = Y A Y = A^* Y^* Y = A^* X^* A^* Y^* Y = X A Y A Y,
+  \end{cases}\]
+  显然上下两个式子是相等的, 所以 \(X\) 和 \(Y\) 是相等的.
+</p>
+<p>
+  好了, 终于铺垫完了, 下面就是展现M-P广义逆的威力的时刻了. 在我们给出 \(A x = b\) 的通解(含最小二乘解)这个问题的答案之前, 我们先来做一些观察: 如果上述系统无解, 那么根据最小二乘解的定义, \(\lVert A \hat{x} - b \rVert_2^2\) 取到了最小值, 如果上述系统有解, 那么 \(\lVert A x - b \rVert_2^2\) 一样取到了最小值 \(0\) , 换句话说, 对有解的系统求最小二乘解就等同于求解. 这为我们的通解形式提供了一定的理论依据.
+</p>
+<p>
+  那么, 剩下的事情就变得好处理了.
+</p>
+<p id="prop-01">
+  命题1: 对于一个无解的线性系统 \(A x = b\) , 它的一个最小二乘解是 \(\hat{x} = A^{\dagger} b\) .<br/>
+  证: 因为 \(\hat{x}\) 是最小二乘解当且仅当 \(A^* A \hat{x} = A^* b\) , 并且有<a href="#href-07">[7]</a>:
+  \[A^* A A^{\dagger} b = A^* (A A^{\dagger})^* b = A^* A^{* \dagger} A^* b = A^* b,\]
+  所以 \(A^{\dagger} b\) 是最小二乘解. <span class="mdui-float-right">\(\square\)</span>
+</p>
+<p id="prop-01p">
+  命题1': 对于一个有解的线性系统 \(A x = b\) , 它的一个解是 \(x = A^{\dagger} b\) .<br/>
+  证: 根据上述讨论, 对有解的系统求最小二乘解就等同于求解, 再加上<a href="#prop-01">命题1</a>, 这个命题就是显然的. <span class="mdui-float-right">\(\square\)</span>
+</p>
+<p id="lemma-01">
+  引理1: 对于任意矩阵 \(A\) , \(\mathrm{rank} ~ A = \mathrm{rank} ~ A^{\dagger} = \mathrm{rank} ~ A A^{\dagger} = \mathrm{rank} ~ A^{\dagger} A\) .<br/>
+  证: 根据SVD分解的构成即得, 因为它们都等于 \(\mathrm{rank} ~ \Sigma\) . <span class="mdui-float-right">\(\square\)</span>
+</p>
+<p id="lemma-02">
+  引理2: 对于矩阵 \(A \in \mathbb{F}^{m \times n}\) , \(\mathrm{range} (I - A^{\dagger} A) \oplus \mathrm{range} (A^{\dagger} A) = \mathbb{F}^{n}\) , 其中 \(\oplus\) 表示线性空间之间的直和(direct sum).<br/>
+  证: 首先, 任何 \(v \in \mathbb{F}^{n}\) 都可以被分解为 \((I - A^{\dagger} A) v + A^{\dagger} A v\) , 所以有 \(\mathrm{range} (I - A^{\dagger} A) + \mathrm{range} (A^{\dagger} A) = \mathbb{F}^{n}\) . 然后, 对于任意 \(u, v \in \mathbb{F}^{n}\) , 都有:
+  \[\begin{aligned}
+  \langle (I - A^{\dagger} A) u, A^{\dagger} A v \rangle & = v^* A^{\dagger} A (I - A^{\dagger} A) u \\
+  & = v^* (A^{\dagger} A - A^{\dagger} (A A^{\dagger} A)) u \\
+  & = 0,
+  \end{aligned}\]
+  所以这两个线性空间中的向量都是正交而线性无关的, 它们的和确实是直和. <span class="mdui-float-right">\(\square\)</span>
+</p>
+<p id="prop-02">
+  命题2: 对于任意有解的线性系统 \(A x = b\) , 其中 \(A \in \mathbb{F}^{m \times n}\) , \(\{x\} = \{A^{\dagger} b + (I - A^{\dagger} A) v \vert \forall v\}\) 是其所有解.<br/>
+  证: 首先根据<a href="#prop-01p">命题1</a>有:
+  \[A (A^{\dagger} b + (I - A^{\dagger} A) v) = A (A^{\dagger} b) + (A - A A^{\dagger} A) v = b,\]
+  说明它们都是系统的解. 然后, 我们知道系统的解的维数应该是 \(\mathrm{dim} ~ \mathrm{null} ~ A\) , 根据<a href="#lemma-01">引理1</a>和<a href="#lemma-02">引理2</a>有:
+  \[\begin{aligned}
+  \mathrm{dim} ~ \mathrm{range} (I - A^{\dagger} A) & = n - \mathrm{dim} ~ \mathrm{range} ~ A^{\dagger} A \\
+  & = n - \mathrm{dim} ~ \mathrm{range} ~ A \\
+  & = \mathrm{dim} ~ \mathrm{null} ~ A,
+  \end{aligned}\]
+  所以它们就是全部的解. <span class="mdui-float-right">\(\square\)</span>
+</p>
+<p id="prop-03">
+  命题3: 对于任意无解的线性系统 \(A x = b\) , 其中 \(A \in \mathbb{F}^{m \times n}\) , \(\{\hat{x}\} = \{A^{\dagger} b + (I - A^{\dagger} A) v \vert \forall v\}\) 是其所有最小二乘解.<br/>
+  证: 因为求最小二乘解等价于求解 \(A^* A x = A^* b\) , 并且根据<a href="#prop-02">命题2</a>, 它的通解是<a href="#href-08">[8]</a>:
+  \[\begin{aligned}
+  x & = (A^* A)^{\dagger} A^* b + (I - (A^* A)^{\dagger} (A^* A)) v \\
+  & = A^{\dagger} (A^{\dagger *} A^*) b + (I - (A^{\dagger} (A^{\dagger *} A^*)) A) v \\
+  & = A^{\dagger} A A^{\dagger} b + (I - (A^{\dagger} A A^{\dagger}) A) v \\
+  & = A^{\dagger} b + (I - A^{\dagger} A) v,
+  \end{aligned}\]
+  所以它们是所有的最小二乘解. <span class="mdui-float-right">\(\square\)</span>
+</p>
+<p id="prop-04">
+  命题4: 在 \(\{A^{\dagger} b + (I - A^{\dagger} A) v \vert \forall v\}\) 中, \(A^{\dagger} b\) 是唯一的拥有最小的二范数的向量.<br/>
+  证:
+  \[\langle A^{\dagger} b, (I - A^{\dagger} A) v \rangle = b^* (A^{* \dagger} - A^{* \dagger} A^* A^{* \dagger}) v = 0,\]
+  再由勾股定理即得. <span class="mdui-float-right">\(\square\)</span>
+</p>
 <div class="mdui-divider"></div>
 <p>
   <span id="href-01">[1]: 这等价于对于线性映射 \(T \in \mathcal{L} (V, W)\) , 若 \(V\) 是有限维的线性空间, 那么 \(\mathrm{dim} ~ V = \mathrm{dim} ~ \mathrm{null} ~ T + \mathrm{dim} ~ \mathrm{range} ~ T\) , 可以参见Sheldon Axler的<a href="https://linear.axler.net/" target="_blank">Linear Algebra Done Right</a>.</span><br/>
   <span id="href-02">[2]: 只有可逆的方阵才能满足 \(A\) 的秩等于 \(x\) 的维数, 这也说明了当 \(A\) 是不可逆方阵的时候, 它也属于"宽线性系统".</span><br/>
-  <span id="href-03">[3]: \(A^{\dagger}\) 常被写作 \(A^{+}\) , 但是在Penrose的论文<a href="#href-04">[4]</a>中其实是前者. \(\dagger\) 在 \(\TeX\) 中写作<code>\dagger</code>, 意思是匕首, 但是据说和基督教中的十字架也有关系.</span><br/>
-  <span id="href-04">[4]: Penrose, R. "A Generalized Inverse for Matrices." Proc. Cambridge Phil. Soc. 51, 406-413, 1955. <a href="https://www.cambridge.org/core/services/aop-cambridge-core/content/view/5F4516D6B9989BB6563A4B267CC7D615/S0305004100030401a.pdf/generalized_inverse_for_matrices.pdf">文章链接</a></span><br/>
-  <span id="href-05">[5]: 首先, 这里的逻辑其实反了, 应该是因为"逆"是唯一的, 我们才会赋予它这样的符号, 也就是把它看作是一个函数. 其次, \(\mathbb{R}\) 中的相反数和倒数(分别对应于加法和乘法)都是能够体现"逆"的唯一性的例子.</span>
+  <span id="href-03">[3]: 这种说法既不严谨也不对, 因为对于一个不可逆方阵 \(A\) , \(A x = b\) 既可能有无穷多解, 也可能没有解. "高线性系统"准确而言是指无解的线性系统.</span><br/>
+  <span id="href-04">[4]: \(A^{\dagger}\) 常被写作 \(A^{+}\) , 但是在Penrose的论文<a href="#href-05">[5]</a>中其实是前者. \(\dagger\) 在 \(\TeX\) 中写作<code>\dagger</code>, 意思是匕首, 但是据说和基督教中的十字架也有关系.</span><br/>
+  <span id="href-05">[5]: Penrose, R. "A Generalized Inverse for Matrices." Proc. Cambridge Phil. Soc. 51, 406-413, 1955. <a href="https://www.cambridge.org/core/services/aop-cambridge-core/content/view/5F4516D6B9989BB6563A4B267CC7D615/S0305004100030401a.pdf/generalized_inverse_for_matrices.pdf">文章链接</a></span><br/>
+  <span id="href-06">[6]: 首先, 这里的逻辑其实反了, 应该是因为"逆"是唯一的, 我们才会赋予它这样的符号, 也就是把它看作是一个函数. 其次, \(\mathbb{R}\) 中的相反数和倒数(分别对应于加法和乘法)都是能够体现"逆"的唯一性的例子.</span><br/>
+  <span id="href-07">[7]: 这里隐含了 \(A^{* \dagger} = A^{\dagger *}\) , 不过它的证明是显然的.</span><br/>
+  <span id="href-08">[8]: 这里隐含了 \((A^* A)^{\dagger} = A^{\dagger} A^{\dagger *}\) , 不过它的证明在<a href="#href-07">[7]</a>的帮助下也是显然的.</span>
 </p>
