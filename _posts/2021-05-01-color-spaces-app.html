@@ -1,0 +1,109 @@
+---
+layout: post
+katex: true
+title: "Color Spaces: A Personal Perspective"
+subtitle: "其简称为CS:APP, 但也不一定."
+headline: "nuntius ipsum"
+abstract: "本文主要给出了一种相对便于理解的从HSL颜色空间到RGB颜色空间的转换方式, 并从中地推得对HSL颜色空间的一种理解."
+---
+
+<p>
+  我们在符号上规定 \((R, G, B)\) 和 \((H, S_{L}, L)\) <a href="#href-01">[1]</a> \(\in [0, 1]^{3}\) .
+</p>
+<p>
+  首先, 通过观察可知, \((R, G, B)\) 三个分量中有一个分量为 \(0\) , 一个分量为 \(1\) 的坐标所对应的点(颜色)在 \((H, S_{L}, L)\) 的坐标系下的 \(S_{L}\) 和 \(L\) 分量是不变的, 分别为 \(1\) 和 \(0.5\) , 而这些点构成一个闭路, 如<a href="#img-01">图1</a>所示.
+</p>
+<div id="img-01" style="text-align: center;">
+<img src="/assets/img/2021-05-01-color-spaces-app/rgb-spaces.svg" alt="Image of a unit cube in the 3-D Descartes coordinate system, occupying [0, 1]^3, and a directional polyline starting from (1, 0, 0) to (1, 1, 0), (0, 1, 0), (0, 1, 1), (0, 0, 1), (1, 0, 1), and ending with (1, 0, 0) is highlighted."/>
+<p>图1. \(\{(H, S_{L}, L) \vert S_{L} = 1, L = 0.5\}\) 在 \((R, G, B)\) 的<i>Descartes</i>坐标系下所构成的闭路</p>
+</div>
+<p>
+  如果我们从 \((R, G, B) = (1, 0, 0)\) 出发, 沿着<a href="#img-01">图1</a>中的箭头方向, 顺序经过 \((1, 1, 0)\), \((0, 1, 0)\) 等点, 并最终返回 \((1, 0, 0)\) , 此时的 \(H\) 连续并且匀速地从 \(0\) 变成了 \(1\) . 具体而言, 如果沿着上述路径移动的话, 那么路程 \(s\) 的归一化变量 \(s / 6 \) 在数值上与 \(H\) 相同. 所以我们可以解析地给出 \((H, S_{L}, L) = (H, 1, 0.5)\) 的点所对应的 \((R, G, B)\) 坐标:
+  <div id="eq-01">
+  \[\begin{pmatrix}R_0 \\ G_0 \\ B_0\end{pmatrix} = \begin{cases}
+  (1, 6 H - 0, 0)^{\mathrm{T}}, & 6 H \in [0, 1), \\
+  (2 - 6 H, 1, 0)^{\mathrm{T}}, & 6 H \in [1, 2), \\
+  (0, 1, 6 H - 2)^{\mathrm{T}}, & 6 H \in [2, 3), \\
+  (0, 4 - 6 H, 1)^{\mathrm{T}}, & 6 H \in [3, 4), \\
+  (6 H - 4, 0, 1)^{\mathrm{T}}, & 6 H \in [4, 5), \\
+  (1, 0, 6 - 6 H)^{\mathrm{T}}, & 6 H \in [5, 6]. \\
+  \end{cases}\tag{1}\]
+  </div>
+</p>
+<p>
+  然后, 根据观察可知, 在上述基础上, 如果将 \(L\) 改为大于 \(0.5\) 的值, 则 \(R, G, B\) 的各分量连续且匀速地变化到 \(1\) , 反之则是变化到 \(0\) . 同样地, 我们可以给出下述解析式:
+  <div id="eq-02">
+  \[\begin{pmatrix}R_1 \\ G_1 \\ B_1\end{pmatrix} = \begin{cases}
+  \begin{pmatrix}R_0 & 0 \\ G_0 & 0 \\ B_0 & 0\end{pmatrix} \begin{pmatrix}2 L \\ 1 - 2 L\end{pmatrix}, & L \in [0, 0.5), \\
+  \begin{pmatrix}R_0 & 1 \\ G_0 & 1 \\ B_0 & 1\end{pmatrix} \begin{pmatrix}2 - 2 L \\ 2 L - 1\end{pmatrix}, & L \in [0.5, 1], \\
+  \end{cases}\tag{2}\]
+  </div>
+  其中的 \((R_0, G_0, B_0)\) 为<a href="#eq-01">式1</a>中的 \((R_0, G_0, B_0)\) .
+</p>
+<p>
+  最后, 在<a href="#eq-02">式2</a>的基础上, 如果 \(S_{L}\) 发生了变化, 那么就在原有的基础上以 \(S_{L} : (1 - S_{L})\) 的比例加入 \((L, L, L)\) , 其解析式如下:
+  \[
+  \begin{pmatrix}R \\ G \\ B\end{pmatrix} = \begin{pmatrix}R_1 & L \\ G_1 & L \\ B_1 & L\end{pmatrix} \begin{pmatrix}S_L \\ 1 - S_L\end{pmatrix}.
+  \]
+</p>
+<p>
+  至此, 我们获得了一个完整的算法, 可以将 \((H, S_{L}, L)\) 坐标转换为对应的 \((R, G, B)\) 坐标. 同时, 我们也可以将这个算法转换为对HSL颜色空间的一种定性理解:
+</p>
+<ul>
+  <li>\(H\) 接近 \(0^{\circ}\) , \(120^{\circ}\) , 以及 \(240^{\circ}\) 时, 颜色分别接近红, 绿, 蓝.</li>
+  <li>其余条件不变时, \(L\) 越大, 颜色越接近最亮的白色, 即 \((R, G, B) = (1, 1, 1)\) 所代表的颜色, 否则越接近黑色.</li>
+  <li>其余条件不变时, \(S_L\) 越小, 颜色越接近 \((R, G, B) = (L, L, L)\) 所代表的颜色, 或者可以感性地认为是颜色变得"浑浊"了, 因为 \((R, G, B)\) 中的三个分量的差变小了. </li>
+</ul>
+<div class="mdui-divider"></div>
+<p>
+  下面我们将证明上述的转换算法与<a href="#href-02">[2]</a>中所提及的是等价的.
+</p>
+<p>
+  首先, 我们可以将情况分为 \(6 \times 2\) 种, 分别为 \(\lfloor 6 H \rfloor\) 和 \(\lfloor 2 L \rfloor\) 取不同值时的情况.
+</p>
+<p>
+  \[C = \begin{cases}
+  (2 L) S_{L}, & L \in [0, 0.5), \\
+  (2 - 2 L) S_{L}, & L \in [0.5, 1].
+  \end{cases}\]
+  \[\begin{pmatrix}R_1' \\ G_1' \\ B_1'\end{pmatrix} = \begin{cases}
+  C (1, 6 H, 0)^{\mathrm{T}}, & \lfloor 6 H \rfloor = 0, \\
+  C (2 - 6 H, 1, 0)^{\mathrm{T}}, & \lfloor 6 H \rfloor = 1, \\
+  C (0, 1, 6 H - 2)^{\mathrm{T}}, & \lfloor 6 H \rfloor = 2, \\
+  C (0, 4 - 6 H, 1)^{\mathrm{T}}, & \lfloor 6 H \rfloor = 3, \\
+  C (6 H - 4, 0, 1)^{\mathrm{T}}, & \lfloor 6 H \rfloor = 4, \\
+  C (1, 0, 6 - 6 H)^{\mathrm{T}}, & \lfloor 6 H \rfloor = 5.
+  \end{cases}\]
+</p>
+<p>
+  我们发现, 除了一个系数 \(C\) , \((R_1', G_1', B_1')\) 与 \((R_0, G_0, B_0)\) 是完全一样的. 所以我们接下来只对 \(L\) 进行分类讨论:
+</p>
+<ul>
+  <li>
+    当 \(L \in [0, 0.5)\) 时, \((R, G, B)\)
+    \[\begin{aligned}
+    & = (R_0, G_0, B_0) \cdot 2 L \cdot S_L \\
+    & + (1, 1, 1) \cdot L \cdot (1 - S_L) \\
+    & = (R_0, G_0, B_0) \cdot C + (1, 1, 1) \cdot (L - L S_L) \\
+    & = (R_0, G_0, B_0) \cdot C + (1, 1, 1) \cdot (L - \dfrac{C}{2}),
+    \end{aligned}\]
+  </li>
+  <li>
+    当 \(L \in [0.5, 1]\) 时, \((R, G, B)\)
+    \[\begin{aligned}
+    & = (R_0, G_0, B_0) \cdot (2 - 2 L) \cdot S_L \\
+    & + (1, 1, 1) \cdot ((2 L - 1) S_L + L \cdot (1 - S_L)) \\
+    & = (R_0, G_0, B_0) \cdot C \\
+    & + (1, 1, 1) \cdot (L + (L - 1) S_L) \\
+    & = (R_0, G_0, B_0) \cdot C + (1, 1, 1) \cdot (L - \dfrac{C}{2}).
+    \end{aligned}\]
+  </li>
+</ul>
+<p>
+  可以看出, 这种方法的特点是将 \((H, S_{L}, L)\) 三个分量进行了一定程度的解耦, 从而更容易理解三个分量分别的作用. <span class="mdui-float-right">\(\square\)</span>
+</p>
+<div class="mdui-divider"></div>
+<p>
+  <span id="href-01">[1]: 为了将HSL颜色空间中的 \(S_L\) 和HSV颜色空间中定义不同的 \(S_{V}\) 区分开来, 我们将两者分别加上了下标. 并且, 根据<a href="#href-02">[2]</a>所述, 两种颜色空间中的 \(H\) 的定义是相同的, 所以其没有加上下标.</span><br/>
+  <span id="href-02">[2]: HSL and HSV - Wikipedia, <a href="https://en.wikipedia.org/wiki/HSL_and_HSV" target="_blank">https://en.wikipedia.org/wiki/HSL_and_HSV</a>.</span>
+</p>
