@@ -1,0 +1,82 @@
+---
+layout: post
+katex: true
+# prism: true
+title: "一种另类的解析 C 中关于指针的语法的思路"
+subtitle: ""
+headline: "nuntius ipsum"
+abstract: "指针是 C 语言的精髓。——无名氏<br/>指针是学业不精的程序员的大杀器。——Liam Huang<br/>出自[1]，见文末。"
+---
+
+
+<p>
+  有一个很有名的关于 C 的指针的助记法，据说是出自 C Primer Plus （但是我并没有考证过），就是把变量声明从右往左读，并且把<code>*</code>读作"(a) pointer to"（或者"points to"，如果你愿意的话），那么一大半关于指针的问题就能迎刃而解了。比如说
+<pre><code>const int* a;
+// a is a pointer to int const
+// (aka const int)
+int* const b;
+// b is a const pointer to int
+</code></pre>
+  就可以很容易地被区分开：<code>a</code>是指向<code>const int</code>的指针，而<code>b</code>是指向<code>int</code>的指针，并且自己是常量<a href="#href-02">[2]</a>。但是如果遇到更加复杂的声明，比如遇到数组和函数指针的时候，这个方法就有一点力不从心了（或者只是因为我比较菜）。
+</p>
+<p>
+  当我们使用指针的时候，可能会写出像<code>int* bar = &foo;</code>的代码，然后用<code>*bar</code>进行数据的操作。所以，不太严谨地说，<code>*bar</code>就是一个<code>int</code>（所以说，把指针的声明写成像是<code>int *bar;</code>而不是<code>int* bar</code>也是有道理的）。
+</p>
+<p>
+  我们举一些例子：一个\(10 \times 10\)的二维<code>int</code>数组，和一个指向它的指针，可以被写作
+<pre><code>int    a[10][10];
+int (*b)[10][10] = &a;
+</code></pre>
+  注意到，由于结合性的原因，括号是必需的，有括号时<code>clangd</code>显示的类型是<code>int (*)[10][10]</code>，是一个指向<code>int [10][10]</code>的指针，而没有括号时显示的类型是<code>int *[10][10]</code>，是一个指向<code>int</code>的指针数组，大小为\(10 \times 10\)。这也告诉我们类型一般就是把变量名去掉之后的声明。
+</p>
+<p>
+  我们如法炮制一下，函数指针会像下面这样：
+<pre><code>int    foo(int);
+int (*bar)(int) = &foo;
+</code></pre>
+  再顺便提一句，<code>foo</code>返回的是<code>int</code>，换句话说对于外界而言，<code>foo</code>就是一个<code>int</code>，只是它需要一些别的参数才能给出值。如果再进一步，把函数指针当作参数传入的时候则会是像下面这样，不难发现我们只是把上面的指针的声明直接丢了进去：
+<pre><code>int foo(int (*bar)(int));
+</code></pre>
+  或者，如果不要变量名的话，就是：
+<pre><code>int foo(int (*)(int));
+</code></pre>
+  如果函数返回的本就是一个指针的话，就会是：
+<pre><code>int *foo;
+// foo is a pointer to int
+int *bar();
+// bar is a function which returns
+// a pointer to int
+int *(*barr)() = &bar;
+// barr is a pointer to a function 
+// which returns a pointer to int
+</code></pre>
+  如果返回的是数组的话：
+<pre><code>int foo[10];
+// an array of int
+int (*bar)[10] = &foo;
+// a pointer to an array of int
+int (*barr())[10];
+// a function which returns
+// a pointer to an array of int
+int (*(*barrr)())[10] = &barr;
+// a pointer to a function 
+// which returns a pointer
+// to an array of int 
+</code></pre>
+</p>
+<p>
+  如果不考虑cv限定符的话，那么讨论得可能就差不多了。最后我们以反向构造<a href="#href-01">[1]</a>中"登峰造极的<code>(*(void(*)())0)();</code>"来结束这个话题。首先，我们通过强制类型转换把<code>0</code>变成一个指向一个参数空返回空的函数的地址，那么就需要构造出这个函数指针的类型：
+<pre><code>void foo();
+// a function which returns nothing
+void (*bar)() = &foo;
+// a pointer to a function
+// which returns nothing
+// void (*)() is its type
+</code></pre>
+  然后我们做强制类型转换，也就是<code>(void (*)())0</code>，然后是解引用（虽然这步应该是可选的），也就是<code>*(void (*)())0</code>，最后是调用，然后我们就得到了登峰造极的<code>(*(void(*)())0)();</code>。
+</p>
+<div class="mdui-divider"></div>
+<p>
+  <span id="href-01">[1]：<a href="https://liam.page/2017/02/05/pointer-in-C-and-Cpp/" target="_blank">C 和 C++ 中的指针 | 始终</a>。</span><br/>
+  <span id="href-02">[2]：常量指针和指针常量两个名词被有意避开了，因为有人傻傻分不清楚，比如说我。</span><br/>
+</p>
