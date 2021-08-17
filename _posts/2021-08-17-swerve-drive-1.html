@@ -1,0 +1,47 @@
+---
+layout: post
+katex: true
+title: "Swerve Drive 研究 - 1.11"
+subtitle: ""
+headline: "nuntius ipsum"
+abstract: "Swerve Drive 在 FRC 中已经杀穿了，接下来听说还要在 RM 中大展身手<del>大 A 特 A</del>，借给 RM 校内赛的车写程序的机会分析一波。"
+---
+
+<p>
+  注意：看懂下文（包括符号表示和分析逻辑）可能需要一些矢量力学的基础以及其表示方法，比如知道\(\dot{x} = \dfrac{\mathrm{d}}{\mathrm{d} t} x\)，和\(\vec{x}^{\mathrm{b}}\)表示\(\vec{x}\)在相对基\(\mathrm{b}\)下的表示。
+</p>
+<p>
+  首先，我们从最简单的角度去分析 Swerve Drive 的控制原理：已知目前整车的速度矢量和角速度<a href="#href-01">[1]</a>，如何获得各个轮子的速度和相对于整体的旋转角？如果我们假设轮子的速度和旋转角所构成的矢量总是该点的速度矢量，那么事情基本就迎刃而解了。
+</p>
+<p>
+  我们在车上选取一点\(C\)，作为连体基的原点，并用\(\vec{q} = (\vec{r}^{\mathrm{T}}_{C}, \varphi)^{\mathrm{T}} = (x_{C}, y_{C}, \varphi)^{\mathrm{T}}\)表示车的位置和相对于绝对基的旋转角，并用\(\vec{\rho}^{\mathrm{b}}_{i}\)表示第\(i\)个轮子相对于连体基的坐标。所以第\(i\)个轮子相对于绝对基的坐标\(\vec{r}_{i}\)即
+  \[\vec{r}_{i} = \vec{r}_{C} + \vec{\rho}_{i} = \vec{r}_{C} + R_{\varphi} \vec{\rho}^{\mathrm{b}}_{i}, \tag{1}\]
+  其中\(R_{\varphi}\)为二维的旋转矩阵，即
+  \[\begin{pmatrix}
+  \cos \varphi & - \sin \varphi \\
+  \sin \varphi & \phantom{-} \cos \varphi \\
+  \end{pmatrix}.\]
+</p>
+<p>
+  有了坐标之后，只要将其对时间求导就能得到结果。假设车相对于连体基的速度和角速度为\((\vec{v}'^{\mathrm{T}}_{C}, \omega')^{\mathrm{T}} = (v'_{Cx}, v'_{Cy}, \omega')^{\mathrm{T}}\)<a href="#href-02">[2]</a>，那么
+  \[\dot{\vec{q}} = (\vec{v}^{\mathrm{T}}_{C}, \omega)^{\mathrm{T}} = \begin{pmatrix} R_{\varphi} & 0 \\ 0 & 1 \\ \end{pmatrix} \begin{pmatrix} \vec{v}'_{C} \\ \omega' \end{pmatrix},\]
+  再对\((1)\)求导就有
+  \[\begin{aligned} \vec{v}_{i}
+  & = \dot{\vec{r}}_{i} = \vec{v}_{C} + \dot{\vec{\rho}}_{i} = R_{\varphi} \vec{v}'_{C} + \dot{R}_{\varphi} \vec{\rho}^{\mathrm{b}}_{i} + R_{\varphi} \dot{\vec{\rho}}^{\mathrm{b}}_{i} \\
+  & = R_{\varphi} \vec{v}'_{C} + \dot{\varphi} R_{(\varphi + \pi / 2)} \vec{\rho}^{\mathrm{b}}_{i} + \vec{0},
+  \end{aligned}\]
+  最后加上车的角度的修正，即得
+  \[\begin{aligned} \vec{v}'_{i}
+  & = R_{- \varphi} \vec{v}_{i} \\
+  & = R_{- \varphi} R_{\varphi} \vec{v}'_{C} + R_{- \varphi} \dot{\varphi} R_{(\varphi + \pi / 2)} \vec{\rho}^{\mathrm{b}}_{i} \\
+  & = \vec{v}'_{C} + \omega' R_{(\pi / 2)} \vec{\rho}^{\mathrm{b}}_{i}.
+  \end{aligned}\]
+</p>
+<p>
+  其实，不难发现，上式的前半部分，即\(\vec{v}'_{C}\)，就是车的速度矢量，而后半部分的\(\omega' R_{(\pi / 2)} \vec{\rho}^{\mathrm{b}}_{i}\)，或者将其写成\(\vec{\omega}' \times \vec{\rho}^{\mathrm{b}}_{i}\)，就是车的旋转的体现，这说明了 Swerve Drive 的控制基础就是速度矢量的线性性。
+</p>
+<div class="mdui-divider"></div>
+<p>
+  <span id="href-01">[1]：车即指整个在运动的刚体，由于 FRC 遗留的习惯，称之为车。</span><br/>
+  <span id="href-02">[2]：这个描述是欠妥的，因为自己相对于自己的连体基的速度和角速度一定为\(0\)，所以这个其实是指经过姿态角（旋转角）修正过的速度和角速度。因为同样的原因，有关的矢量并没有带有右上角的\(^\mathrm{b}\)，而是使用\('\)表示。</span><br/>
+</p>
