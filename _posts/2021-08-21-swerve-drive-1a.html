@@ -1,0 +1,131 @@
+---
+layout: post
+katex: true
+title: "Swerve Drive 研究 - 1.11A"
+subtitle: ""
+headline: "nuntius ipsum"
+abstract: ""
+---
+
+<p>
+  1.11A 可以视作 1.11 的附录，其主要内容为探究 WPILib 中关于 Swerve Drive 的实现。
+</p>
+<p>
+  我们以 C++ 的样例代码（SwerveBot）为例。首先，<code>TeleopPeriodic()</code>中的<code>DriveWithJoystick(true);</code>简单处理了手柄输入后直接调用了<code>m_swerve.Drive(...)</code>，所以我们直接开始看<code>DriveTrain</code>的组成：
+  <ul>
+    <li>\(4\)个<code>frc::Translation2d</code>，用来记录四个轮子相对于中心的坐标；</li>
+    <li>\(4\)个<code>SwerveModule</code>，用来控制和反馈轮子的朝向和速度；</li>
+    <li>\(1\)个<code>frc::AnalogGyro</code>，给 Kalman filter 提供额外信息进行轨迹的修正；</li>
+    <li>\(1\)个<code>frc::SwerveDriveKinematics&#60;4&#62;</code>，用来将车的\((v'_{x}, v'_{y}, \omega')^{\mathrm{T}}\)转为各个轮子的速度和方向，其中<code>&#60;4&#62;</code>表示有四个轮子；</li>
+    <li>\(1\)个<code>frc::SwerveDriveOdometry&#60;4&#62;</code>，用来计算车目前的位置。</li>
+  </ul>
+</p>
+<p>
+  <code>frc::Translation2d</code>没什么好说的，就是一个矢量，其作用也在 1.11 中分析过了。所以我们先看<code>SwerveModule</code>：里面有两个<code>frc::PWMSparkMax</code>，作为 drive motor 和 pivot motor，两个<code>frc::Encoder</code>，用作反馈，一些用于计算的常数，比如轮径，还有几个用于计算输出的 helper class。它的两个最重要的成员函数（也是除了构造函数等平凡的函数外仅有的两个）就是用来获得状态的<code>GetState()</code>和设定状态的<code>SetDesiredState(...)</code>，前者简单地包装了一下 encoder 的值，后者用<code>frc::SwerveModuleState::Optimize(...)</code>处理了一下，然后经过几个 helper class，就把值给到了电机。而这个<code>Optimize(...)</code>所做的优化其实也很简单：如果目前的角度和期望的角度之差大于\(\pi / 2\)，那么就将期望的角度加上\(\pi\)，并且将期望的速度变成其相反数<a href="#href-01">[1]</a>，确保从目前的状态到期望的状态，pivot motor 旋转的角度不会超过\(\pi / 2\)。
+</p>
+<p>
+  <code>frc::SwerveDriveKinematics&#60;NumModules&#62;</code>的逻辑和 1.11 中的逻辑基本一致，但是它除了包含从\((v'_{x}, v'_{y}, \omega')^{\mathrm{T}}\)到各轮子的速度和方向的逆向变换，还包含了反过来的正向变换。至于具体的计算，它使用了矩阵运算，我们先看逆向变换：
+  <ol>
+    <li>构造矩阵<code>m_inverseKinematics</code>\(\in \mathbb{R}^{(2 \cdot \texttt{NumModules}) \times 3} =\)
+    \[\begin{pmatrix}
+    1 & 0 & - \rho^{\mathrm{b}}_{1 y} \\
+    0 & 1 & \phantom{-} \rho^{\mathrm{b}}_{1 x} \\
+    1 & 0 & - \rho^{\mathrm{b}}_{2 y} \\
+    0 & 1 & \phantom{-} \rho^{\mathrm{b}}_{2 x} \\
+    \vdots & \vdots & \vdots \\
+    0 & 1 & \rho^{\mathrm{b}}_{\texttt{NumModules} x}
+    \end{pmatrix},\]
+    不难发现，其每个\(2 \times 3\)的分块矩阵都是
+    \[\begin{pmatrix}
+    I & R_{\pi / 2} \vec{\rho}^{\mathrm{b}}_{i}
+    \end{pmatrix},\]
+    并且这个矩阵往往只需要构造一次，这对于正向变换来说很重要；
+    </li>
+    <li>已知<code>chassisSpeedsVector</code>\(= (v'_{x}, v'_{y}, \omega')^{\mathrm{T}}\)；</li>
+    <li>逆向变换的结果就是<code>moduleStatesMatrix = m_inverseKinematics * chassisSpeedsVector;</code>，其每个\(2 \times 1\)的分块矩阵就是各轮子的速度和方向在平面直角坐标系上的表示。利用分块矩阵我们可以很容易地验证结果：
+    \[\begin{aligned}
+    \begin{pmatrix}
+    I & R_{\pi / 2} \vec{\rho}^{\mathrm{b}}_{i}
+    \end{pmatrix}
+    \begin{pmatrix}
+    \vec{v}' \\ \omega'
+    \end{pmatrix}
+    & = I \vec{v}' + R_{\pi / 2} \vec{\rho}^{\mathrm{b}}_{i} \omega' \\
+    & = \vec{v}' + \omega' R_{\pi / 2} \vec{\rho}^{\mathrm{b}}_{i}.
+    \end{aligned}\]
+    </li>
+  </ol>
+  至于正向变换，其实就是把逆向变换反过来，但是就会需要解方程，所以之前提到的不变的矩阵<code>m_inverseKinematics</code>就派上了用场：
+  <ol>
+    <li>构造矩阵<code>m_inverseKinematics</code>；</li>
+    <li>计算<code>m_inverseKinematics</code>的 \(Q R\) 分解，并保存于<code>m_forwardKinematics</code>中，注意到这个运算也只需要进行一次；</li>
+    <li>已知<code>moduleStatesMatrix</code>；</li>
+    <li>正向变换的结果就是<code>chassisSpeedsVector = m_forwardKinematics.solve(moduleStatesMatrix);</code>。</li>
+  </ol>
+  不过需要注意的是，这个正向变换的过程中解的方程是有可能无解的。在 Eigen 的文档中对这个<code>solve(...)</code>的描述是<a href="#href-02">[2]</a>：
+  <blockquote>
+    This method just tries to find as good a solution as possible. If you want to check whether a solution exists or if it is accurate, just call this function to get a result and then compute the error of this result, or use <code>MatrixBase::isApprox()</code> directly, for instance like this:<br/>
+    <code>bool a_solution_exists = (A*result).isApprox(b, precision);</code>
+  </blockquote>
+  根据一个简单粗暴的实验<a href="#href-03">[3]</a>，这个函数应该是在无解的时候返回一个最小二乘解，但是此时的最小二乘解是否可信（或者说它是否反映真正的车的运动状态），就不太好说了。
+</p>
+<p>
+  最后是<code>frc::SwerveDriveOdometry&#60;NumModules&#62;</code>，它的<code>Update(...)</code>先通过<code>frc::SwerveDriveKinematics&#60;NumModules&#62;</code>计算得到速度分量，乘以\(\Delta t\)得到\((\Delta x'_{C}, \Delta y'_{C})^{\mathrm{T}}\)，再用 gyro 已经给出的旋转角，计算得到\(\Delta \varphi'\)，然后使用如下方法得到新的状态<a href="#href-05">[5]</a>：
+  \[\dfrac{\mathrm{d}}{\mathrm{d} t}
+  \begin{pmatrix}
+  x_{C} \\ y_{C} \\ \varphi
+  \end{pmatrix} =
+  \begin{pmatrix}
+  R_{\varphi} & 0 \\
+  0 & 1
+  \end{pmatrix}
+  \begin{pmatrix}
+  \vec{v}' \\ \omega'
+  \end{pmatrix},
+  \]
+  若\((v'_{x}, v'_{y}, \omega')^{\mathrm{T}}\)被视作常数，那么就可以很容易地对两边积分：
+  \[\begin{aligned}
+  \begin{pmatrix}
+  \Delta x_{C} \\ \Delta y_{C} \\ \Delta \varphi
+  \end{pmatrix}
+  & = \left .
+  \begin{pmatrix}
+  \dfrac{R_{\varphi - \pi / 2}}{\omega'} & 0 \\
+  0 & t
+  \end{pmatrix} \right \vert^{\Delta t}_{0}
+  \begin{pmatrix}
+  \vec{v}' \\ \omega'
+  \end{pmatrix} \\
+  & = \left .
+  \begin{pmatrix}
+  \dfrac{\sin \omega' t}{\omega'} & \dfrac{\cos \omega' t}{\omega'} & 0 \\
+  - \dfrac{\cos \omega' t}{\omega'} & \dfrac{\sin \omega' t}{\omega'} & 0 \\
+  0 & 0 & t
+  \end{pmatrix} \right \vert^{\Delta t}_{0}
+  \begin{pmatrix}
+  v'_{x} \\ v'_{y} \\ \omega'
+  \end{pmatrix} \\
+  & = \begin{pmatrix}
+  \frac{\sin \omega' \Delta t}{\omega'} & \frac{\cos \omega' \Delta t - 1}{\omega'} & 0 \\
+  \frac{1 - \cos \omega' \Delta t}{\omega'} & \frac{\sin \omega' \Delta t}{\omega'} & 0 \\
+  0 & 0 & t
+  \end{pmatrix}
+  \begin{pmatrix}
+  v'_{x} \\ v'_{y} \\ \omega'
+  \end{pmatrix} \\
+  &= \begin{pmatrix}
+  \sin \Delta \varphi' \frac{\Delta x'_{C}}{\Delta \varphi'} + (\cos \Delta \varphi' - 1) \frac{\Delta y'_{C}}{\Delta \varphi'} \\
+  (1 - \cos \Delta \varphi') \frac{\Delta x'_{C}}{\Delta \varphi'} + \sin \Delta \varphi' \frac{\Delta y'_{C}}{\Delta \varphi'} \\
+  \Delta \varphi'
+  \end{pmatrix}.
+  \end{aligned}\]
+  这样就可以更新位置了，至于旋转角用 gyro 的数据，还是计算得到的值，就见仁见智了，不过<code>Update(...)</code>中只用了 gyro 的值。
+</p>
+<div class="mdui-divider"></div>
+<p>
+  <span id="href-01">[1]：简单的数学变换：\(a \angle \varphi = a \mathrm{e}^{\mathrm{i} \varphi} = (-a) \angle (\varphi + \pi)\)。</span><br/>
+  <span id="href-02">[2]：详见<a href="https://eigen.tuxfamily.org/dox/classEigen_1_1HouseholderQR.html#a3e8e56769bbaaed0616ad98c4ff99c7b" target="_blank">Eigen: Eigen::HouseholderQR&#60; _MatrixType &#62; Class Template Reference</a>。</span><br/>
+  <span id="href-03">[3]：实验代码：<a href="/assets/attachments/2021-08-21-swerve-drive-1a/test.cc"><code>test.cc</code></a>，或者直接看<a href="#href-04">[4]</a>。</span><br/>
+  <span id="href-04">[4]：<code>test.cc</code>生成了一个矩阵\(A\)并对其做\(QR\)分解，再随机生成一些向量\(v\)并求解得到\(x\)，然后判断\(v - Ax\)与\(Ax\)是否正交。</span><br/>
+  <span id="href-05">[5]：见<a href="https://file.tavsys.net/control/controls-engineering-in-frc.pdf" target="_blank">Controls Engineering in the FIRST Robotics Competition</a>的11.2（Pose exponential），<code>frc::Pose2D::Exp(...)</code>的描述有误，并不是 section 10.2。</span><br/>
+</p>
