@@ -1,0 +1,78 @@
+---
+layout: post
+katex: true
+title: "Access components of a <code>vec4</code> like what you do in GLSL, in C language"
+subtitle: ""
+headline: "nuntius ipsum"
+abstract: ""
+---
+
+<p>
+  In GLSL, or another word, in those shaders, you can access a component, R value, for example, of a <code>vec4</code>, <code>foo</code>, for example, in the way of
+  <pre><code>float bar = foo.r;</code></pre>
+  And when you write down that code, you treat <code>foo</code> as a representation of a color, sort of. However, <code>vec4</code> can represent many other things, like coordinates. For example, the Manhattan distance between two point <code>alice</code> and <code>bob</code> can be calculated in the following way:
+  <pre><code><!--
+    -->float distance = abs(alice.x - bob.x) +
+<!---->                 abs(alice.y - bob.y) +
+<!---->                 abs(alice.z - bob.z);</code></pre>
+  You might have noticed, we can use different ways to access components of <code>vec4</code>, when we treat it differently. But that is not quite so correct: actually we can access those components using the 'wrong' way. For exmaple:
+  <pre><code>float bar = foo.x;</code></pre>
+  has exactly the same effect as the previous one, which uses <code>foo.r</code> to access the component, which is intended to represent the R value of a color. Actually, we can regard a <code>vec4</code> as an array of <code>float</code>, which has \(4\) components, and you can access its \(0\)th element by
+  <ul>
+    <li><code>.x</code>,</li>
+    <li><code>.r</code>,</li>
+    <li><code>.s</code>.</li>
+  </ul>
+</p>
+<p>
+  However, that is not the trivial case in C language. When you define a struct, <code>vec4</code>, for example, you'll probably define it like:
+  <pre><code><!--
+    -->typedef struct {
+<!---->  float x;
+<!---->  float y;
+<!---->  float z;
+<!---->  float w;
+<!---->} vec4;</code></pre>
+  However, if you define it like the thing above, you can never access the first element of the struct by <code>.r</code>, as what you'll do in GLSL. So is there any solutions? If we switch the language to C++, maybe I'll define the class like:
+  <pre><code><!--
+    -->struct vec4 {
+<!---->  float x, y, z, w;
+<!---->  
+<!---->  float &r() { return x; }
+<!---->  float &g() { return y; }
+<!---->  float &b() { return z; }
+<!---->  float &a() { return w; }
+<!---->  float &s() { return x; }
+<!---->  float &t() { return y; }
+<!---->  float &p() { return z; }
+<!---->  float &q() { return w; }
+<!---->};</code></pre>
+  However, that is still not satisfactory enough, since there are many extra brackets when we access everything except <code>.x</code>, <code>.y</code>, <code>.z</code>, and <code>.w</code>.
+</p>
+<p>
+  Alright, I'll tell you my answer: use a union. That is what cppreference.com says<a href="#href-01">[1]</a>:
+  <blockquote>
+    A union is a special class type that can hold only one of its non-static data members at a time.
+  </blockquote>
+  And my definition is:
+  <pre><code><!--
+    -->typedef union {
+<!---->  struct {
+<!---->    float x, y, z, w;
+<!---->  };
+<!---->  struct {
+<!---->    float r, g, b, a;
+<!---->  };
+<!---->  struct {
+<!---->    float s, t, p, q;
+<!---->  };
+<!---->} vec4;</code></pre>
+  Just like what cppreference.com says, those three struct overlaps each other, and the result is that <code>.x</code>, <code>.r</code>, and <code>.s</code> are exactly the same, since they share a same space, and so do other variables. Also, there are some other tricks, such as anonymous structs, but I'll not go further on those tricks.
+</p>
+<p>
+  Finally, you may ask, then how to access those variables in any combinations, like <code>foo.wzyx</code>? Sadly, I have no idea for now, and I think that's hard to implement, since I think it is some black magic of GLSL, instead of something derived from C language.
+</p>
+<div class="mdui-divider"></div>
+<p>
+  <span id="href-01">[1]：<a href="https://en.cppreference.com/w/c/language/union" target="_blank">Union declaration - cppreference.com</a>.</span><br/>
+</p>
