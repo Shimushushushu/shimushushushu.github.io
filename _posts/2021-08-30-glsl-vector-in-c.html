@@ -52,7 +52,7 @@ abstract: ""
 <p>
   Alright, I'll tell you my answer: use a union. That is what cppreference.com says<a href="#href-01">[1]</a>:
   <blockquote>
-    A union is a special class type that can hold only one of its non-static data members at a time.
+    A union is a type consisting of a sequence of members whose storage overlaps (as opposed to struct, which is a type consisting of a sequence of members whose storage is allocated in an ordered sequence). The value of at most one of the members can be stored in a union at any one time. 
   </blockquote>
   And my definition is:
   <pre><code><!--
