@@ -35,6 +35,10 @@
         <i class="mdui-list-item-icon mdui-icon material-icons">send</i>
         <div class="mdui-list-item-content">Blog</div>
       </a>
+      <a class="mdui-list-item mdui-ripple{% if page.highlight == 'archive' %} mdui-list-item-active{% endif %}" href="{% if page.highlight == 'archive' %}#{% else %}/archive.html{% endif %}" target="_self">
+        <i class="mdui-list-item-icon mdui-icon material-icons">archive</i>
+        <div class="mdui-list-item-content">Archive</div>
+      </a>
     </ul>
     <div class="mdui-typo" style="padding: 20px 16px;">
       © {{ site.time | date: "%Y" }} {{ site.author }}<br/>

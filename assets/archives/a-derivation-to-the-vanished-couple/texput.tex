@@ -1,0 +1,46 @@
+\hrule
+\vskip 1in
+
+\centerline{\bf A derivation to the vanished couple}
+\vskip .5cm
+As we have assumed, the force applied to the surface is
+$$
+\underline{F}_{n}
+= \int \! \! \! \int_{D} {\rm d} \underline{F}_{n}
+= \int \! \! \! \int_{D} \underline{\tau}_{n} \, {\rm d} A_{n}.
+$$
+Similarly, the couple applied to it, with respect to some point~$P$ is
+$$
+\underline{M}_{n, P}
+= \int \! \! \! \int_{D} \underline{r}_{n, P} \times {\rm d} \underline{F}_{n}, \eqno(1)
+$$
+and if the `stress~couple' applied to~${\rm d} A_{n}$ is denoted as~$\underline{\omega}_{n}$,
+the couple can be also written as
+$$
+\underline{M}_{n, P}
+= \int \! \! \! \int_{D} \underline{\omega}_{n} \, {\rm d} A_{n}
++ \int \! \! \! \int_{D} \underline{r}_{n, P} \times {\rm d} \underline{F}_{n}. \eqno(2)
+$$
+Conparing with Eq. (1) and~(2), and they give
+$$
+\int \! \! \! \int_{D} \underline{\omega}_{n} \, {\rm d} A_{n} = \underline{0}.
+$$
+Since the closed region~$D$ can be chosen arbitarily, and~$\underline{\omega}_{n}$ is supposed to be continuous over~$D$,
+$\underline{\omega}_{n}$ has to be~$\underline{0}$ everywhere.
+
+Or, we can use some bruteforce to prove that:
+$$
+\eqalign{\underline{\omega}_{n}
+&= \lim_{A_{n} \to 0} {\underline{M}_{n} \over A_{n}}
+ = \lim_{A_{n} \to 0} {\int \! \! \! \int_{D} \underline{r}_{n} \times {\rm d} \underline{F}_{n} \over A_{n}}
+ = \lim_{A_{n} \to 0} {\int \! \! \! \int_{D} \underline{r}_{n} \times \underline{\tau}_{n} \, {\rm d} A_{n} \over A_{n}}, \cr
+\hbox{so} \quad \Vert \underline{\omega}_{n} \Vert
+&\le \lim_{A_{n} \to 0} {1 \over A_{n}} {\int \! \! \! \int_{D} \Vert \underline{r}_{n} \Vert \Vert \underline{\tau}_{n} \Vert \, {\rm d} A_{n}} \cr
+&\le \lim_{A_{n} \to 0} \Vert \underline{r}_{n} \Vert_{\max} \Vert \underline{\tau}_{n} \Vert_{\max} = \underline{0}, \quad \hbox{which is equivalent to} \quad \underline{\omega}_{n} = \underline{0},}
+$$
+as long as we restrict the shape of~$D$ so that~$\Vert \underline{r}_{n} \Vert_{\max}$ converges to~$0$ as~$A_{n}$ does.
+\vskip 1in
+\hrule
+\vfill\eject
+
+\end
