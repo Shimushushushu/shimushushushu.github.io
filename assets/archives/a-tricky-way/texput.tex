@@ -1,0 +1,53 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{geometry}
+\usepackage{siunitx}
+
+\geometry{
+  left=3.18cm, right=3.18cm,
+  top=2.54cm, bottom=2.54cm
+}
+
+\begin{document}
+Suppose we're solving such a problem, where the beam is uniform (that is, $H_{33}^{\text{c}}$ remains unchanged along the whole beam), and it is subjected to both distributed but uniform transverse load and concentrated loads, in the $x_2$ direction. Then we have the following propositions:
+\begin{enumerate}
+  \item $\bar{u}_2$ and $\phi_3$ are continuous along the whole beam, by its geometry.
+  \item $M_3$ is continuous along the whole beam, by the moment equilibrium equation.
+  \item For every place, $x_0$ for example, $-V_2(x_0^-) + V_2(x_0^+) + F(x_0) = 0$, by the force equilibrium equation, where $F(x_0)$ is the concentrated force applied on that place. And we can rewrite the equation as
+  \begin{equation}
+  V_2 \vert_{x_0^-}^{x_0^+} + F(x_0) = 0.
+  \label{eq:V_2}
+  \end{equation}
+  \item $\dfrac{\mathrm{d} V_2}{\mathrm{d} x_1} + p_2 = 0$ holds along the whole beam, or at least for places where no concentrated forces are applied.
+\end{enumerate}
+Of course there are some other boundary conditions, but we'll talk about that later.
+
+Then, with those propositions, and assumptions we have made, we can construct a function $\hat{p}(x_1)$, which is
+\begin{equation}
+\hat{p}(x_1) = \dfrac{p_2}{H_{33}^{\text{c}}} + \sum_i \dfrac{F_i}{H_{33}^{\text{c}}} \delta(x_1 - x_i).
+\label{eq:phat}
+\end{equation}
+Note that this function is valid in dimension, since the dimension of the Dirac $\delta$ function is $\SI{}{/m}$\footnote{Usually we use that function in signals, where the variable is usually $t$, and the dimension of $\delta(t - t_0)$ is $\SI{}{s^{-1}}$.}.
+
+We integrate it by once and get
+\[
+\dfrac{p_2}{H_{33}^{\text{c}}} x_1 + \sum_i \dfrac{F_i}{H_{33}^{\text{c}}} u(x_1 - x_i) + C_1.
+\]
+We multiply it by $-H_{33}^{\text{c}}$, and call it $\hat{V}_2$, which is
+\begin{equation}
+\hat{V}_2(x_1) = -p_2 x_1 - \sum_i F_i u(x_1 - x_i) - H_{33}^{\text{c}} C_1,
+\label{eq:vhat}
+\end{equation}
+and we surprisingly find that $\hat{V}_2$ satisfies equation~\ref{eq:V_2}. So we integrate equation~\ref{eq:vhat} and add a minus sign to obtain so-called $\hat{M}_3$, which is
+\begin{equation}
+\hat{M}_3(x_1) = \dfrac{p_2}{2} x_1^2 + \sum_i F_i (x_1 - x_i) u(x_1 - x_i) + H_{33}^{\text{c}} C_1 x_1 + C_2,
+\label{eq:mhat}
+\end{equation}
+which is indeed continuous. In a similar fashion, we divide equation~\ref{eq:mhat} by $M_{33}^{\text{c}}$ and integrate it by once and twice respectively, we can obtain
+\begin{align}
+\hat{\phi}_3(x_1) &= \dfrac{p_2}{6 H_{33}^{\text{c}}} x_1^3 + \sum_i \dfrac{F_i}{2 H_{33}^{\text{c}}} (x_1 - x_i)^2 u(x_1 - x_i) + \dfrac{C_1}{2} x_1^2 + C_2 x_1 + C_3, \label{eq:phihat} \\
+\hat{\bar{u}}_2(x_1) &= \dfrac{p_2}{24 H_{33}^{\text{c}}} x_1^4 + \sum_i \dfrac{F_i}{6 H_{33}^{\text{c}}} (x_1 - x_i)^3 u(x_1 - x_i) + \dfrac{C_1}{6} x_1^3 + \dfrac{C_2}{2} x_1^2 + C_3 x_1 + C_4, \label{eq:uhat}
+\end{align}
+where there are still four constants to be determined. So we'll use the boundary conditions. For example, for a simply supported beam, the displacement $\bar{u}_2$ and bending moment $M_3$ are $0$, and we can use equation \ref{eq:uhat}~and~\ref{eq:mhat} respectively to obtain those constants. What's more, we explicitly give equation~\ref{eq:phat} instead of some function that satisfies condition 4, because equation~\ref{eq:uhat} can be obtained by simply integrate equation~\ref{eq:phat} by four times.
+\end{document}
