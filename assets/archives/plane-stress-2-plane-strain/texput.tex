@@ -1,0 +1,87 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{geometry}
+\usepackage{siunitx}
+
+\geometry{
+  left=3.18cm, right=3.18cm,
+  top=2.54cm, bottom=2.54cm
+}
+
+\begin{document}
+Consider the following constitutive equation
+\[
+\begin{pmatrix}
+\epsilon_1 \\ \epsilon_2 \\ \epsilon_3 \\
+\end{pmatrix}
+=
+\frac{1}{E}
+\begin{pmatrix}
+1 & -\nu & -\nu \\
+-\nu & 1 & -\nu \\
+-\nu & -\nu & 1 \\
+\end{pmatrix}
+\begin{pmatrix}
+\sigma_1 \\ \sigma_2 \\ \sigma_3 \\
+\end{pmatrix}
+,
+\tag*{(2.4a, b, and c)}
+\]
+if we assume a plane stress problem, then $\sigma_3$ vanishes, and the equation becomes
+\[
+\begin{pmatrix}
+\epsilon_1 \\ \epsilon_2 \\
+\end{pmatrix}
+=
+\frac{1}{E}
+\begin{pmatrix}
+1 & -\nu \\
+-\nu & 1 \\
+\end{pmatrix}
+\begin{pmatrix}
+\sigma_1 \\ \sigma_2 \\
+\end{pmatrix}
+.
+\]
+However, if we assume a plane strain problem, by the last equation
+\[
+0 = \epsilon_3 = \frac{1}{E} (-\nu \sigma_1 - \nu \sigma_2 + \sigma_3),
+\]
+we have $\sigma_3 = \nu (\sigma_1 + \sigma_2)$, and substitute it into the first two equations, which gives
+\[
+\begin{pmatrix}
+\epsilon_1 \\ \epsilon_2 \\
+\end{pmatrix}
+=
+\frac{1}{E}
+\begin{pmatrix}
+(1 - \nu^2) & -(\nu + \nu^2) \\
+-(\nu + \nu^2) & (1 - \nu^2) \\
+\end{pmatrix}
+\begin{pmatrix}
+\sigma_1 \\ \sigma_2 \\
+\end{pmatrix}
+=
+\frac{1 - \nu^2}{E}
+\begin{pmatrix}
+1 & -\frac{\nu}{1 - \nu} \\
+-\frac{\nu}{1 - \nu} & 1 \\
+\end{pmatrix}
+\begin{pmatrix}
+\sigma_1 \\ \sigma_2 \\
+\end{pmatrix}
+,
+\]
+and we find a surprising conclusion: if we substitute $E$ with $\dfrac{E}{1 - \nu^2}$, and $\nu$ with $\dfrac{\nu}{1 - \nu}$, we can transfer any equation that is valid for a plane stress problem, to a equation that is valid for a plane strain problem.
+
+For example, the governing equation for a plane stress problem is
+\[
+\nabla^4 \phi = - (1 - \nu) \nabla^2 V, \tag*{(3.29)}
+\]
+where $\phi$ is the Airy stress function, and $V$ is the force potential. Then using the rule mentioned above, we have
+\[
+\nabla^4 \phi = - (1 - \frac{\nu}{1 - \nu}) \nabla^2 V = - \frac{1 - 2 \nu}{1 - \nu} \nabla^2 V, \tag*{(3.25)}
+\]
+which is exactly the governing equation for a plane strain problem.
+\end{document}
