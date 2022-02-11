@@ -2,10 +2,10 @@
 layout: none
 ---
 
-<!-- DEPRECATED, since there are too many formulae. -->
-
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- <?xml-stylesheet type="text/xsl" title="XSL Formatting" href="/rss.xsl" media="all" ?> -->
+
+<!-- DEPRECATED, since there are too many formulae. -->
 
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>

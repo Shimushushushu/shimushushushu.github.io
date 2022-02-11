@@ -1,0 +1,75 @@
+---
+layout: post
+katex: true
+title: "UyHiP 200812q 的一种（没有卵用的）实现"
+subtitle: ""
+headline: "nuntius ipsum"
+abstract: "简单来说，这是一个利用“任意数字的任意二元/一元运算是 \\(O(1)\\) 的”这个“漏洞”实现 \\(O(N)\\) 排序的算法，算法源自 Matrix67，见 [2]。"
+---
+
+<p>
+  在估计算法复杂度的时候，为了便于计算，我们常常会假设一些比较原子的操作，比如代数运算，最多是 \(O(1)\) 的 <a href="#href-03">[3]</a>。如果原始类型的长度有一个已知的上界，比如 128 位，那这就是合理的。但是反过来说，如果有的原始类型，比如说整数，可以是任意长的，并且对它的任何操作还是 \(O(1)\) 的，那就不对劲了，因为我们可以靠它实现很可能不是 \(O(1)\) 的并行运算。比如说
+  \[\begin{array}{lrrrr}
+    & 01 & 01 & \cdots & 01 \\
+  + & 02 & 03 & \cdots & 02 \\
+  \hline
+    & 03 & 04 & \cdots & 03
+  \end{array}\]
+  这样的两个大整数之间的加法就是并行加法的一种实现，只要给进位留出空间。
+</p>
+<p>
+  所以，Michael Brand 在 2008 年末提出了这样的一个问题，假设算数运算（包含取模），位运算，比较运算，左右移，内存分配和操作，以及控制结构（<code>if</code> 之类的）都是 \(O(1)\) 的，
+  <blockquote>
+    Design an algorithm for sorting n integers that takes O(n) time. <a href="#href-01">[1]</a>
+  </blockquote>
+</p>
+<p>
+  而 Matrix67 在他的博客中给出了一种简单易懂的算法 <a href="#href-02">[2]</a>，它的逻辑是：
+  <ol>
+    <li>先利用位运算实现最多 \(O(1)\) 的取绝对值；</li>
+    <li>再利用位运算实现最多 \(O(1)\) 的两个数之间的排序；</li>
+    <li>然后实现最多 \(O(N)\) 的编解码，即将 \(x_1, x_2, \cdots, x_N\) 连成一个数字，或反过来；</li>
+    <li>最后利用排序网络不断地对相邻两个数排序，直至排序结束，这一步也是 \(O(N)\) 的。</li>
+  </ol>
+  显然这个算法确实是 \(O(N)\) 的，并且它的好处是，相比那些“充分发挥”大整数运算能力的算法，它的“空间复杂度”小得多，是 \(O(N)\) 的。本文意在用这个算法，实现一个程序，对从 <code>0x0</code> 到 <code>0xF</code> 的 \(16\) 个无符号整数做排序，而只需要用到 <code>uint64_t</code> 这样常规的数据类型。至于为什么是 \(16\) 个数，是因为 \(4\) 是 \(n \cdot 2^n \le 64\) 的最大整数解，而 \(2^4 = 16\)。
+</p>
+<p>
+  首先是取绝对值。两个 \(4\) 位的无符号整数做有符号减法，值的范围是 \([-15, 0]\)，所以我们考虑 \(5\) 位有符号整数的取绝对值。算法如下：
+  <ol>
+    <li>取整数 <code>x</code> 的最高位，为 <code>0</code> 就是正数（或零），反之亦然；</li>
+    <li>对最高位取反；</li>
+    <li>对取反的结果加上 <code>0x1F</code> 并模 <code>0x20</code>，令其为 <code>mask</code>，如果原数是正数（或零），<code>mask = 0x00 = 0b00000</code>，否则 <code>mask = 0x1F = 0b11111</code>。至此，我们构造出了所需要的掩码；</li>
+    <li>通过取反加一构造出 <code>-x</code>，即 <code>-x = ~x + 1</code>；</li>
+    <!-- <li>返回 <code>(x & (~mask)) + ((-x) & mask)</code>。</li> -->
+    <li>返回 <code>(x ^ mask) + (mask & 1)</code>，如果 <code>mask</code>为全 <code>1</code> 的表示，那么结果是 <code>x</code>，否则是 <code>~x + 1</code>。</li>
+  </ol>
+</p>
+<p>
+  然后是两两排序。注意到如果 \(a, b \ge 0\)，那么有
+  \[\begin{aligned}
+   \frac{(a + b) + |a - b|}{2} &= \max \{a, b\}, \\
+   \frac{(a + b) - |a - b|}{2} &= \min \{a, b\},
+  \end{aligned}\]
+  所以这个算法是显然的，因为加法是可用的，减法可以通过加相反数实现，取负是通过取反加一实现的，而除以 \(2\) 可以通过右移实现。
+</p>
+<p>
+  接着是编解码。但是因为编解码各只需要一遍，所以它们可以是 \(O(N)\) 的，而这也就意味着用最平凡的算法就可以了。
+</p>
+<p>
+  最后是排序网络。既然条件控制语句并没有那么好用（因为平凡的用法是 \(O(N)\) 的），那么找一个不依赖具体数据的暗箱算法就显得十分合理，比如排序网络。最简单的实现是奇偶移项排序 <a href="#href-04">[4]</a>，只要一遍 <code>for</code> 就完事了。
+</p>
+<p>
+  示例程序中有一个 <code>uint64_t shuffle()</code>，利用 Knuth shuffle <a href="#href-05">[5]</a> 生成一个恰好含 <code>0x0</code> 到 <code>0xF</code> 的整数，然后将其传给 <code>uint64_t sort(uint64_t)</code> 进行排序。
+</p>
+<p>
+  示例代码在<a href="/assets/attachments/2022-02-10-UyHiP-200812q/main.c" target="_blank">这里</a>。可能的输出：
+  <code>8B653C174EFA2D90 -> 0123456789ABCDEF</code>
+</p>
+<div class="mdui-divider"></div>
+<p>
+  <span id="href-01">[1]：<a href="https://www.brand.site.co.il/riddles/200812q.html" target="_blank">Using your Head is Permitted</a>。</span><br/>
+  <span id="href-02">[2]：<a href="http://www.matrix67.com/blog/archives/1209" target="_blank">趣题：理想模型下的排序算法（上） | Matrix67: The Aha Moments</a>。</span><br/>
+  <span id="href-03">[3]：如果研究对象是矩阵乘法这样的算法，加减法甚至是 \(O(0)\) 的，而只有乘除法是 \(O(1)\) 的。</span><br/>
+  <span id="href-04">[4]：<a href="http://www.matrix67.com/blog/archives/185" target="_blank">OI之外的一些东西：简单谈谈排序网络 | Matrix67: The Aha Moments</a>。</span><br/>
+  <span id="href-05">[5]：<a href="https://en.wikipedia.org/wiki/Fisher-Yates_shuffle" target="_blank">Fisher–Yates shuffle - Wikipedia</a>。</span><br/>
+</p>
