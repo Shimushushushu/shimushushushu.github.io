@@ -1,0 +1,26 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{geometry}
+
+\geometry{margin = 2.54cm}
+
+\begin{document}
+Since the plain stress matrix is symmetric, there's a set of eigenvectors,
+$\bar{v}_{1}$ and $\bar{v}_{2}$, which form an orthonormal basis.
+So for all vector $\bar{n}$,
+$\bar{n}^{\mathrm{T}} \underline{\underline{\sigma}} \bar{n}$
+can be rewritten as
+\[
+\sigma_{n} = \bar{n}^{\mathrm{T}} \underline{\underline{\sigma}} \bar{n} = 
+(k_{1} \bar{v}_1 + k_{2} \bar{v}_1)^{\mathrm{T}}
+\underline{\underline{\sigma}}
+(k_{1} \bar{v}_1 + k_{2} \bar{v}_2) =
+k_{1}^2 \lambda_{1} + k_{2}^2 \lambda_{2} \in [\lambda_{2}, \lambda_{1}],
+\]
+where $\lambda_{1}$ and $\lambda_{2}$ are eigenvalues of
+$\bar{v}_{1}$ and~$\bar{v}_{2}$ respectively, and $\lambda_{1} \ge \lambda_{2}$.
+And $\sigma_{n}$ reaches its maximum or minimum,
+if and only if $\bar{n}$ is in the direction of $\bar{v}_{1}$ or $\bar{v}_{2}$,
+respectively, which is equivalent to vanishing of shear stresses.
+\end{document}
