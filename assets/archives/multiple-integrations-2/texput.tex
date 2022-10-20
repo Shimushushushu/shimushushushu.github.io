@@ -1,0 +1,55 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[margin = 2.54cm]{geometry}
+% \usepackage{tikz}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}[lemma]{Definition}
+\newtheorem{prop}[lemma]{Proposition}
+
+\begin{document}
+We jump to the proposition.
+\begin{prop}[Multiple integration]
+  If $f(x)$ is smooth enough, we have
+  \begin{equation}
+    I_n f(x) \mathrel{:=}
+    I_0^{x_0} \prod_{i = 1}^n (I_0^x) f(x) =
+    \int_0^{x_0} \frac{(x_0 - x)^n}{n!} f(x) \, \mathrm{d} x,
+  \end{equation}
+  where $n \in \mathbb{N}$.
+\end{prop}
+\begin{proof}
+  We extend the definition of $I$ as
+  \begin{equation}
+    I_{n, m} f(x) \mathrel{:=}
+    I_0^{x_0} g_m(x) \prod_{i = 1}^n (I_0^x) f(x),
+  \end{equation}
+  where $g_m(x)$ is defined as
+  \begin{equation}
+    g_m(x) \mathrel{:=} \frac{(x_0 - x)^m}{m!},
+  \end{equation}
+  and we have
+  \[\begin{aligned}
+    I_{n, m} f(x) &=
+    \int_0^{x_0} g_m(x)
+    \underbrace{\int_0^x \! \cdots \int_0^x}_n f(x)
+    \, \underbrace{\mathrm{d} x \cdots \mathrm{d} x}_{n + 1} \\
+    &= g_{m + 1}(x)
+    \underbrace{\int_0^x \! \cdots \int_0^x}_n f(x)
+    \, \underbrace{\mathrm{d} x \cdots \mathrm{d} x}_{n} \biggr\rvert_{x_0}^0 +
+    \int_0^{x_0} \! g_{m + 1}(x) \underbrace{\int_0^x \! \cdots \int_0^x}_{n - 1} f(x)
+    \, \underbrace{\mathrm{d} x \cdots \mathrm{d} x}_{n} \\
+    &= \int_0^{x_0} g_{m + 1}(x) \underbrace{\int_0^x \! \cdots \int_0^x}_{n - 1}
+    f(x) \, \underbrace{\mathrm{d} x \cdots \mathrm{d} x}_{n} \\
+    &= I_{n - 1, m + 1} f(x) \\
+    &= \cdots \\
+    &= I_{0, m + n} f(x) \\
+    &= \int_0^{x_0} g_{m + n}(x) f(x) \, \mathrm{d} x.
+  \end{aligned}\]
+  Also, note that $I_n f(x) = I_{n, 0} f(x)$, which implies
+  $I_n f(x) = I_{0, n} f(x)$, completing the proof.
+\end{proof}
+\end{document}

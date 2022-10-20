@@ -1,0 +1,108 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[margin = 2.54cm]{geometry}
+\usepackage{tikz}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}[lemma]{Definition}
+\newtheorem{prop}[lemma]{Proposition}
+
+\begin{document}
+We start from the following constitutive law.
+\begin{prop}[The constitutive law of three-dimensional isotropic meterial]
+  \begin{equation}
+    \sigma^{ij} = \lambda \epsilon^{kk} \delta^{ij} + 2G \epsilon^{ij},
+  \end{equation}
+  where $\lambda$ and~$G$ is defined as
+  \begin{equation}\begin{aligned}
+    \lambda &\mathrel{:=} \frac{\nu E}{(1 + \nu)(1 - 2\nu)}, \\
+    G &\mathrel{:=} \frac{E}{2(1 + \nu)}.
+  \end{aligned}\end{equation}
+\end{prop}
+See Theory of Elasticity, Timoshenko, for reference.
+
+The governing equation.
+\begin{prop}[The governing equation of material in statics]
+  \begin{equation}
+    \frac{\partial \sigma^{ij}}{\partial x^j} + \rho \! f^i = 0.
+  \end{equation}
+\end{prop}
+
+And the kinematic equation.
+\begin{definition}
+  [The kinematic description of material with infinitesimal deformation]
+  \begin{equation}
+    \epsilon^{ij} \mathrel{:=} \frac{1}{2} \biggl(
+    \frac{\partial u^i}{\partial x^j} + 
+    \frac{\partial u^j}{\partial x^i} \biggr).
+  \end{equation}
+\end{definition}
+
+A substitution gives
+\begin{equation}
+  (\lambda + G) \frac{\partial}{\partial x^i}
+  \biggl( \frac{\partial u^j}{\partial x^j} \biggr) +
+  G \frac{\partial u^i}{\partial x^j \partial x^j} +
+  \rho \! f^i = 0,
+\end{equation}
+which is the three-dimensional Lam\'e-Naiver equation, in statics.
+
+Now consider a plane stress problem, where $\sigma^{i3} = 0$,
+and we have
+\begin{equation}
+  \rho \! f^3 = 0.
+\end{equation}
+Meanwhile, we have
+\[
+  \sigma^{33} =
+  \lambda \frac{\partial u^j}{\partial x^j} + 
+  2 G \frac{\partial u^3}{\partial x^3} = 0, 
+\]
+which gives
+\[
+  \frac{\partial u^3}{\partial x^3} =
+  -\frac{\nu}{1 - 2\nu} \frac{\partial u^j}{\partial x^j}
+  \qquad \text{and} \qquad
+  \frac{\partial u^\beta}{\partial x^\beta} =
+  \frac{1 - \nu}{1 - 2\nu} \frac{\partial u^j}{\partial x^j}.
+\]
+Also, we have
+\[
+  \sigma^{\alpha 3} =
+  G \biggl( \frac{\partial u^\alpha}{\partial x^3} +
+  \frac{\partial u^3}{\partial x^\alpha} \biggr) = 0,
+\]
+which gives
+\[
+  \frac{\partial u^\alpha}{\partial x^3 \partial x^3} =
+  - \frac{\partial}{\partial x^\alpha} \frac{\partial u^3}{\partial x^3}.
+\]
+Hence, for a plane stress problem, we have
+\[
+  \biggl( \frac{1 - 2\nu}{1 - \nu} (\lambda + G) -
+  \frac{\nu}{1 - \nu} G \biggr)
+  \frac{\partial}{\partial x^\alpha}
+  \frac{\partial u^\beta}{\partial x^\beta} +
+  G \frac{\partial^2 x^\alpha}{\partial x^\beta x^\beta} +
+  \rho \! f^\alpha = 0,
+\]
+or
+\begin{equation}
+  \frac{E}{2(1 - \nu)} \frac{\partial}{\partial x^\alpha}
+  \frac{\partial u^\beta}{\partial x^\beta} +
+  G \frac{\partial^2 x^\alpha}{\partial x^\beta x^\beta} +
+  \rho \! f^\alpha = 0.
+\end{equation}
+
+By using the transform from a plane stress problem to a plane strain one,
+we have
+\begin{equation}
+  \frac{E}{2(1 + \nu)(1 - 2\nu)} \frac{\partial}{\partial x^\alpha}
+  \frac{\partial u^\beta}{\partial x^\beta} +
+  G \frac{\partial^2 x^\alpha}{\partial x^\beta x^\beta} +
+  \rho \! f^\alpha = 0.
+\end{equation}
+\end{document}
