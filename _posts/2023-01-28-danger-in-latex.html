@@ -1,0 +1,58 @@
+---
+layout: post
+katex: false
+title: "在 LaTeX 中实现 The TeXbook 中的 danger"
+subtitle: ""
+headline: "nuntius ipsum"
+abstract: "在写报告的时候想用 danger，但是遇到了各种各样的问题，勉强解决了，但是感觉隐患巨大。"
+---
+
+<p>在写 solutions' manual 的时候想用 <code>\danger</code>，效果是在一段的开头有前两行都被缩进，然后在缩进的空白处出现一个 "dangerous bend"。</p>
+<p>第一次看到这个标记是在 Knuth 的 The&nbsp;TeXbook 中，虽然书是还了回去，但是还可以从 CTAN 上直接翻出来 <code>texbook.tex</code>，把 verbatim 的标记去掉，在 23729 行左右开始，是这么写的：</p>
+<pre><code>\def\dbend{&lbrace;\manual\char127}} % "dangerous bend" sign
+\def\d@nger{\medbreak\begingroup\clubpenalty=10000
+  \def\par{\endgraf\endgroup\medbreak} \noindent\hang\hangafter=-2
+  \hbox to0pt{\hskip-\hangindent\dbend\hfill}\ninepoint}
+\outer\def\danger{\d@nger}
+\def\dd@nger{\medbreak\begingroup\clubpenalty=10000
+  \def\par{\endgraf\endgroup\medbreak} \noindent\hang\hangafter=-2
+  \hbox to0pt{\hskip-\hangindent\dbend\kern1pt\dbend\hfill}\ninepoint}
+\outer\def\ddanger{\dd@nger}
+\def\enddanger{\endgraf\endgroup} % omits the \medbreak
+</code></pre>
+<p>大概的意思是，先定义了 "dangerous bend"，是从 <code>manfnt</code> 中得到的，然后定义 <code>\d@nger</code>，也就是核心的代码：
+  先和前面的段落（如果有）分隔开，然后开 group，并加上 <code>\clubpanelty</code> 防止立即换行（吗？），再重定义 <code>\par</code> 以结束段落。
+  这些还都是无关紧要的，最重要的是，先阻止原来的段首缩进，并开启 hang（这玩意我不会翻译），其中 <code>\hang</code> 被展开为 <code>\hangindent\parindent</code>，
+  也就是让 <code>\hangindent</code> 的长度等于 <code>\parindent</code>，这个展开我看了好久，因为 The&nbsp;TeXbook 中一般是写出来等号的，也就是 <code>\hangindent=\parindent</code>。
+  然后是用 <code>\hangafter=-2</code> 使得段落的前两行都缩进
+  （如果等于一个负数 <code>-x</code> 就是前 <code>x</code> 行缩进，如果是非负数 <code>x</code> 就是从 <code>x + 1</code> 行开始都缩进），
+  然后从 <code>-\parindent</code> 的地方，也就是还没缩进的时候所在的位置，放一个 "dangerous bend"，最后把字号改成 9 点。<code>\dd@nger</code> 也是类似，只是放了两个标记。
+</p>
+<p>对于 LaTeX 来说，我的想法是，开一个环境，使得环境内的段落都是如此，但是 LaTeX 的宏包乱七八糟的，如果直接改 <code>\everypar</code> 八成会出问题，并且我试了，也得不到想要的效果。好在 LaTeX 提供了钩子。算了，我也不卖关子了，直接给出全部的代码。
+</p>
+<pre><code>\newenvironment{danger}{&percnt;
+  \medbreak
+  \AddToHook{para/begin}[danger]{&percnt;
+    \OmitIndent                                  % 1
+    \hangindent=\parindent
+    \hangafter=-2
+    \hbox to 0pt{\hskip-\hangindent\dbend\hfill}%
+    \null                                        % 2
+  }
+  \ignorespaces
+}{&percnt;
+  \par                                           % 3
+  \RemoveFromHook{para/begin}[danger]
+  \medbreak
+}
+</code></pre>
+<p>
+  就是一个简单的环境，把 The&nbsp;TeXbook 中的代码复制进了 <code>para/begin</code> 的钩子里面。
+  遇到坑的地方主要有三个：
+  <ol>
+    <li><code>\OmitIndent</code>，在这里 <code>\noindent</code> 没用，好像是因为缩进的盒子已经在钩子之前放好了，然后 <code>\OmitIndent</code> 的作用可能是移除上一个盒子。</li>
+    <li><code>\null</code>，这个问题真是逆天。我本来用得好好的，直到我在环境里面用了定理环境，发现缩进还在，但是 "dangerous bend" 没了？后来我才猜是因为 <code>\OmitIndent</code> 可能是靠移除上一个盒子来取消缩进的，
+    我才加了一个空盒子。</li>
+    <li><code>\par</code>，这个问题被发现是因为没有这个 <code>\par</code> 的话，最后一段不会执行钩子，我猜钩子判定是不是 <code>para</code> 的依据包含末尾有无 <code>\par</code>。</li>
+  </ol>
+</p>
