@@ -1,10 +1,10 @@
 ---
 layout: post
 katex: false
-title: "TeX System: A Practitioner's Perspective"
+title: "How TeX Works: A Practitioner's Perspective"
 subtitle: "TeX 对“行”的判定"
 headline: "nuntius ipsum"
-abstract: "本文研究了 TeX 对“行”的判定，并为新的 TeX 的实现提供了除 <cite>TeX: The Program</cite> 以外的第二种参考。"
+abstract: "本文研究了 TeX 对“行”的判定，并为新的 TeX 的实现提供了除 <cite>TeX: The Program</cite> 以外的其它参考，基于对“黑盒”的测试。"
 ---
 
 <p>
@@ -26,5 +26,5 @@ abstract: "本文研究了 TeX 对“行”的判定，并为新的 TeX 的实�
   不禁直呼 Knuth 的深谋远虑。
 </p>
 <p>
-  再顺便来一点别的实验，<code>\catcode`\1=10 \show\1</code> 的结果是 <code>\1=undefined.</code>，而不是 <code>\^^M=macro: ->\␣.</code>，也就是说就是只有空格（和制表符）才会被删除。所以结论是，在输入文件的时候，应该先读入一行，然后直接把尾部的空格删掉，再加上一个回车。这个过程是和分类码或者状态是完全没有关系的。
+  再顺便来一点别的实验，<code>\catcode`\1=10 \show\1</code> 的结果是 <code>\1=undefined.</code>，而不是 <code>\^^M=macro: ->\␣.</code>；而 <code>\show\⟨tab⟩</code> 的结果是 <code>\  =macro: ->\␣.</code>，也就是说就是只有空格才会被删除，就算是分类码同为 10 的制表符都不会被删。所以结论是，在输入文件的时候，应该先读入一行，然后直接把尾部的空格删掉，再加上一个回车。（不过不好办的是，现代语言中的 <code>trim</code> 多会将制表符也一并删除。）这个过程是和分类码或者状态是完全没有关系的。
 </p>
