@@ -1,0 +1,30 @@
+---
+layout: post
+katex: false
+title: "TeX System: A Practitioner's Perspective"
+subtitle: "TeX 对“行”的判定"
+headline: "nuntius ipsum"
+abstract: "本文研究了 TeX 对“行”的判定，并为新的 TeX 的实现提供了除 <cite>TeX: The Program</cite> 以外的第二种参考。"
+---
+
+<p>
+  这事始于我在看 control space <code>\␣</code> 的定义时候，使用了 <code>\show\␣</code>，结果 TeX 没返回 <code>\␣</code> 的定义，倒是返回了 <code>\^^M</code> 的定义，其中 <code>^^M</code> 就是回车，或者说 <code>\r</code>。发现这事大有蹊跷，便先重新看了一眼 <cite>The TeXbook</cite> 的第 8 章，其中提到：
+  <quote>
+    <p>
+      TeX deletes any ⟨space⟩ characters (number 32) that occur at the right end of an input line. Then it inserts a ⟨return⟩ character (number 13) at the right end of the line, except that it places nothing additional at the end of a line that you inserted with ‘<code>I</code>’ during error recovery. Note that ⟨return⟩ is considered to be an actual character that is part of the line; you can obtain special effects by changing its catcode.
+    </p>
+  </quote>
+  以前没遇到这个问题的时候没觉得这话有啥问题，毕竟大多数情况下 ⟨return⟩ 和空格作用完全一致。但是这次才意识到这个处理有点刻意，于是又翻了下 <cite>TeX by Topic</cite>，在 2.2 节的开头看到了这么一段话：
+  <quote>
+    <p>
+      Input from a file (or from the user terminal, but this will not be mentioned specifically most of the time) is handled one line at a time. Here follows a discussion of what exactly is an input line for TeX.
+    </p>
+    <p>
+      Computer systems differ with respect to the exact definition of an input line. The carriage return/line feed sequence terminating a line is most common, but some systems use just a line feed, and some systems with fixed record length (block) storage do not have a line terminator at all.
+    </p>
+  </quote>
+  不禁直呼 Knuth 的深谋远虑。
+</p>
+<p>
+  再顺便来一点别的实验，<code>\catcode`\1=10 \show\1</code> 的结果是 <code>\1=undefined.</code>，而不是 <code>\^^M=macro: ->\␣.</code>，也就是说就是只有空格（和制表符）才会被删除。所以结论是，在输入文件的时候，应该先读入一行，然后直接把尾部的空格删掉，再加上一个回车。这个过程是和分类码或者状态是完全没有关系的。
+</p>
