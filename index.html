@@ -8,7 +8,7 @@ highlight: "index"
 <div class="mdui-typo" style="text-align: justify;">
   <h1>A brief introduction</h1>
   <p>My real name is Sijie Wang, but I rarely use that, for both online and offline cases, for some reason.  The name of Shimushu comes from an island of the Kuril Islands chain.</p>
-  <p>I'll be major in computational continuum dynamics, mainly in fluid.  Besides, I'm keen on \(\TeX\) and literate programming, as well as typesetting.</p>
+  <p>I'll be major in computational continuum dynamics, mainly in fluid.  Besides, I'm keen on <span class="TeX"><span class="T">T</span><span class="e">e</span><span class="X">X</span></span> and literate programming, as well as typesetting.</p>
   <p><s>I enjoy reading philosophy books, in Chinese, English, and Latin, such as René Descartes' <cite>Meditations on First Philosophy</cite>.</s> Now I do not have that much time reading those literatures which consume a lot of time to be fully understood.  Time can always be spared, but I did not do that, so shame on me.</p>
   <!-- <h2>My projects</h2> -->
   <!-- I hide the information (for protection(?)), but you can find it here if you do want to know. -->
@@ -41,3 +41,13 @@ highlight: "index"
   <img class="mdui-chip-icon" src="/assets/img/avatars/DaRK52.jpg"/>
   <span class="mdui-chip-title">DaRK52</span>
 </a>
+<style>
+.TeX>.T {
+  margin-right: -0.1667em;
+}
+.TeX>.e {
+  vertical-align: -0.5ex;
+  margin-right: -0.125em;
+  text-transform: uppercase;
+}
+</style>

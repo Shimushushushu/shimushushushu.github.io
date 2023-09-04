@@ -1,0 +1,105 @@
+---
+layout: post
+katex: true
+title: "如何优雅地在网页中显示 “TeX”"
+subtitle: ""
+headline: "nuntius ipsum"
+abstract: ""
+---
+
+<p>
+  一个最简单的方法是，使用 \(\KaTeX\) 或者 MathJax，然后直接 <code>\(\TeX\)</code>，效果如 “\(\TeX\)”，但是如果就只是想显示 “TeX” 的话，这样实在是有点杀鸡用牛刀了。或者一个更加偷懒的办法是，就用 “TeX” ，除了少数强迫症大伙应该都是满意的吧。
+</p>
+<p>
+  再或者，我们直接在网页中模拟排版 “TeX” 的这三个盒子，先看 <code>\show\TeX</code>，得到
+  <pre><code>->T\kern -.1667em\lower .5ex\hbox {E}\kern -.125emX.</code></pre>
+  然后直接开抄：
+  <pre><code>&lt;span class="TeX"&gt;
+  &lt;span class="T"&gt;T&lt;/span&gt;
+  &lt;span class="e"&gt;E&lt;/span&gt;
+  &lt;span class="X"&gt;X&lt;/span&gt;
+&lt;/span class="TeX"&gt;
+&lt;style&gt;
+.TeX>.T {
+  margin-right: -0.1667em;
+}
+.TeX>.e {
+  vertical-align: -0.5ex;
+  margin-right: -0.125em;
+}
+&lt;/style&gt;
+</code></pre>
+得到的效果是 <span class="TeX"><span class="T">T</span><span class="e">E</span><span class="X">X</span></span>，或者在衬线字体下是 <span class="TeX" style="font-family: serif;"><span class="T">T</span><span class="e">E</span><span class="X">X</span></span>，看上去还过得去吧。（除了这三个字母看上去有点小，尤其是衬线版本的，不过是中西文混排导致的这个问题，可以考虑稍稍放大下字号。）
+</p>
+<p>
+  但是这样有一个小小的问题：如果 CSS 的样式无了（比如说对于无障碍阅读器，或者是文本复制），那么上述方法会变成 “TEX”，这可不是我们想看到的。所以我想到一个小小的 trick，就是让 CSS 控制 “e” 的大小写：
+  <pre><code>.TeX>.e {
+  vertical-align: -0.5ex;
+  margin-right: -0.125em;
+  text-transform: uppercase;
+}</code></pre>
+然后把 HTML 中的 “E” 改成 “e”，显示为 “<span class="TeX"><span class="T">T</span><span class="e">e</span><span class="X">X</span></span>”，效果是一样的，但是它会 fallback 成 “TeX”。对于 “LaTeX” 甚至是 “XeTeX”（第一个 “E” 可以用 <code>transform: scaleX(-1);</code> 实现，uppercase 照样）也可以如此操作。
+</p>
+<p>
+  P.S.: 这种做法我并不是第一个，至少在 2021 年的 <a href="https://pan.icu/63">Kerning Panic·字谈字串（十）宗师级程序员的排印解决方案</a> 中就已出现过类似的操作，甚至还有 <code>sub</code> 标签，不过我在想这个 “E” 是否是语义上的“下标”？至少我不这么认为，所以我没有用 <code>sub</code>。
+</p>
+<p>
+  这里有几个参考：<span class="TeX"><span class="T">T</span><span class="e">e</span><span class="X">X</span></span>、<span class="LaTeX"><span class="L">L</span><span class="a-box"><span class="a">a</span></span><span class="T">T</span><span class="e">e</span><span class="X">X</span></span>、<span class="XeTeX"><span class="X1">X</span><span class="e1">e</span><span class="T">T</span><span class="e2">e</span><span class="X2">X</span></span>，虽然 CSS 写得很烂，大有改进的空间。同时还有一些问题：
+  <ul>
+    <li>LaTeX 中的 “a” 的位置实际上需要一点计算：“A” 的字号是其余字符的 0.7 倍（准确来说是 cmr10 和 cmr7），并且 “A” 的顶部和 “T” 的顶部同高，其中后者是比较难以实现的。现在的数据是用 cmr10 计算出来的，并且在高度上使用了 em 而不是 ex，因为浏览器中的 1em 总是等于 font-size 来着（？）。总之，这个数据大概只能凑合用，不过目前来看貌似还行？(LaTeX 还好，XeTeX 在衬线字体下已经发现可能有左右的 “E” 不同高的情况了，不清楚为什么。)</li>
+    <li>“XeTeX” 中的第一个 “e” 是靠反转实现的，但是会导致在 slanted 的情况下出现问题，即字母朝左边倾斜。</li>
+    <li>pTeX 中 “p” 和 “T” 之间额外的 kerning 应该有多少？因为我是从 hologo 中抄的 kerning 的数据，而 pTeX 感觉多少有点孤儿（毕竟几乎只有日本用嘛），没有被做进去，所以有点无从下手。</li>
+    <li>LaTeX2e 和 eTeX 这种怎么处理？主要的难点是如何显示的是 “ε”，但是复制为或者读作 “e”？再退一步，有没有必要实现这点，因为变成 “e” 感觉主要是为复制出来服务的，而对于无障碍阅读，把它视作 “ε” 应该反而更好。或者，对于无障碍的需求，要不要直接用别的特别的无障碍技术，比如 aria？</li>
+    <li>最后就是，这套实现是否有隐患，比如说改变排版引擎的一些行为，比如换行？</li>
+  </ul>
+</p>
+<style>
+.TeX>.T {
+  margin-right: -0.1667em;
+}
+.TeX>.e {
+  vertical-align: -0.5ex;
+  margin-right: -0.125em;
+  text-transform: uppercase;
+}
+.LaTeX>.L {
+  margin-right: -0.36em;
+}
+.LaTeX>.a-box {
+  margin-right: -0.15em;
+  vertical-align: 0.205em;
+}
+.LaTeX>.a-box>.a {
+  font-size: 0.7em;
+  text-transform: uppercase;
+}
+.LaTeX>.T {
+  margin-right: -0.1667em;
+}
+.LaTeX>.e {
+  vertical-align: -0.5ex;
+  margin-right: -0.125em;
+  text-transform: uppercase;
+}
+.XeTeX>.X1 {
+  margin-right: -0.1em;
+}
+.XeTeX>.e1 {
+  display: inline-block;
+  vertical-align: -0.5ex;
+  transform: scaleX(-1);
+  margin-right: -0.15em;
+  text-transform: uppercase;
+}
+.XeTeX>.T {
+  margin-right: -0.1667em;
+}
+.XeTeX>.e2 {
+  vertical-align: -0.5ex;
+  margin-right: -0.125em;
+  text-transform: uppercase;
+}
+/* .LaTeX, .TeX, .XeTeX {
+  font-family: serif;
+} */
+</style>

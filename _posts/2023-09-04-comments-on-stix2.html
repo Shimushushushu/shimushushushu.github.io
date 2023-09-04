@@ -1,0 +1,66 @@
+---
+layout: post
+katex: false
+title: "以 TeX 用户的角度评价字体：STIX Two"
+subtitle: ""
+headline: "nuntius ipsum"
+abstract: ""
+---
+
+<p>
+  说是评价字体，但是我也不懂字体，只能遇到什么问题说什么了。
+</p>
+<p>
+  最开始用 STIX Two 的动机仅仅是不想用 Computer&nbsp;Modern 或者与其近似的字体了（比如说 Latin&nbsp;Modern），并且我也不想为了用一个 OpenType 字体就得把 pdfTeX 改成慢<sup>3</sup>的 XeTeX（虽然好像可以用 <code>otftotfm</code> 把 OpenType 转为 pdfTeX 可用的 TFM，但是懒得研究）。使用 STIX Two 字体只需要一行命令：
+  <pre><code>\usepackage{stix2}</code></pre>
+  它就能加载 STIX Two 家族的字型。但是需要注意的是它只有 roman、italic 和数学字型，所以 sans-serif 和 monospace 应该还是用的默认的。
+</p>
+<p>
+  和 Computer Modern 比起来，对于我来说，STIX Two 除了看上去不一样以外，它的字宽更小，每行能够容纳更多的字，简称省纸。同时，我猜测对于栏宽不太长的时候，这会使得词被迫断开的情况变少，如图所示，不过也不排除这个例子是恰好如此。除此之外，感觉 STIX Two 看上去更粗。
+</p>
+<div class="minipages">
+<figure class="minipage-1">
+  <img src="/assets/img/2023-09-04-comments-on-stix2/cmr10-lipsum.svg" alt="Lorem ipsum in Computer Modern, roman." />
+  <figcaption>Lorem ipsum in CMR10.</figcaption>
+</figure>
+<figure class="minipage-1">
+  <img src="/assets/img/2023-09-04-comments-on-stix2/stix2t-lipsum.svg" alt="Lorem ipsum in STIX Two, roman." />
+  <figcaption>Lorem ipsum in STIX Two.</figcaption>
+</figure>
+</div>
+<p>
+  除了正文，我更加关心它的数学符号，别的不说，直接导致我开始锐评的就是 <code>\mathit</code> 的问题：<code>\mathit</code> 的字体和 <code>\textit</code> 的字体的字距效果是不一样的，前者更大。因为我知道 TeX 中数学符号之间的间距还由 TeX 加以调整，但是我后来看到 Computer Modern 中的效果是没问题的，这才感觉是不是 STIX Two Math 的问题。从 Mach 数这个符号可能看不出来多少，毕竟就俩字母，那么 enthalpy 如何？这直接差点导致我要弃用这个字体家族了，因为我经常用 <code>\mathit</code> 表示程序中的变量。
+</p>
+<div class="minipages">
+  <figure class="minipage-1">
+    <img src="/assets/img/2023-09-04-comments-on-stix2/stix2m-ma.svg" alt="Symbol of Mach number (Ma) in STIX Two's Math font, italic." />
+    <figcaption>Symbol of Mach number in STIX Two Math.</figcaption>
+  </figure>
+  <figure class="minipage-1">
+    <img src="/assets/img/2023-09-04-comments-on-stix2/stix2t-ma.svg" alt="Symbol of Mach number (Ma) in STIX Two's Text font, italic." />
+    <figcaption>Symbol of Mach number in STIX Two Text.</figcaption>
+  </figure>
+</div>
+<div class="minipages">
+  <figure class="minipage-1">
+    <img src="/assets/img/2023-09-04-comments-on-stix2/stix2m-enthalpy.svg" alt="Variable name `enthalpy' in STIX Two's Math font, italic." />
+    <figcaption>Variable ‘enthalpy’ in STIX Two Math.</figcaption>
+  </figure>
+  <figure class="minipage-1">
+    <img src="/assets/img/2023-09-04-comments-on-stix2/stix2t-enthalpy.svg" alt="Variable name `enthalpy' in STIX Two's Text font, italic." />
+    <figcaption>Variable ‘enthalpy’ in STIX Two Text.</figcaption>
+  </figure>
+</div>
+<p>
+  啥都没说，也没啥可总结的，鉴定为一眼看上去还行，其它的啥也说不上来。
+</p>
+<style>
+@media (min-width: 1200px) {
+  .minipages {
+    display: flex;
+  }
+  .minipage-1 {
+    flex: 1;
+  }
+}
+</style>
